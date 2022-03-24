@@ -1,4 +1,5 @@
 import analysis
+import sequence_search
 
 
 def p_values(selected_sequences, remaining_sequences):
@@ -19,3 +20,22 @@ def p_values(selected_sequences, remaining_sequences):
                                 selected_column_counts[i],
                                 remaining_column_count[i]))
     return p_values
+
+
+def aligned_sequences(gene_names, site_number, window_width):
+    """
+    Return a view of sequences aligned by phosphorylation site and limited by
+    a window width to either site of it.
+    """
+    aligned_sequences = []
+    for sequence in sequences:
+        site_index, site_count = 0, 0
+        sequence = sequence_search.get_sequence(name)
+        aligned_sequence = []
+        for i, letter in enumerate(sequence):
+            if site_count == site_number: site_index = i; break
+            if letter.upper() == "S": site_count += 1
+        for i in range(site_index - window_width, site + window_width):
+            aligned_sequence.append(sequence[i])
+        aligned_sequences.append(aligned_sequence)
+    return aligned_sequences
