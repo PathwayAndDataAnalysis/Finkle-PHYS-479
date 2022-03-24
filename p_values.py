@@ -2,15 +2,14 @@ import analysis
 import sequence_search
 
 
-def p_value(selected_column,
-            remaining_column,
+def p_value(selected,
+            remaining,
             selected_column_count,
             remaining_column_count):
     """
     Return the sum of the hypergeometric probabilities of more 
     favorable results in the same number of trials.
     """
-    selected, remaining = len(selected_column), len(remaining_column)
     favorable = selected_column_count + remaining_column_count
     remaining_unfavorable = remaining - remaining_column_count
     trials = selected + remaining
