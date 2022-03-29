@@ -34,17 +34,16 @@ def hypergeometric_test():
                               [0.006445865568610187, 0.9985899806396821],
                               [0.9883420938210076, 0.0341612031176084]]
     failures = 0
+    print()
     for table, accepted_p_values in zip(tables, accepted_p_values_list):
-        found_p_values = p_values.p_values(*table)
-        print("a, b, c, d")
-        print(table)
-        print("Enrichment | Deficiency")
-        print("Accepted", accepted_p_values)
-        print("Found", found_p_values)
+        deficiency_p_value = p_values.deficiency_p_value(*table)
+        enrichment_p_value = p_values.enrichment_p_value(*table)
+        print(*table[:2])
+        print(*table[2:])
+        print("        Enrichment         |     Deficiency")
+        print("Accepted", *accepted_p_values)
+        print("Found   ", enrichment_p_value, "", deficiency_p_value)
         print()
-        failures += round(found_p_values[0], 5) != round(accepted_p_values[0], 5)
-        failures += round(found_p_values[1], 5) != round(accepted_p_values[1], 5)
-    print(failures > 0)
 hypergeometric_test()
         
                            
