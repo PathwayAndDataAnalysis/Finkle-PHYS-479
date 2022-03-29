@@ -8,17 +8,7 @@ def deficiency_p_value(remaining_unfavorable,
                        remaining_favorable,
                        selected_favorable):
     """
-    a b
-    c d
-
-      3     10
-    a - 1 b + 1
-    c + 1 d - 1
-
-    15 8
-    20 
-
-    
+    Return the p-value of the number of selected favorable results being too low.
     """
     unfavorable = remaining_unfavorable + selected_unfavorable
     favorable = remaining_favorable + selected_favorable
@@ -33,6 +23,9 @@ def enrichment_p_value(remaining_unfavorable,
                        selected_unfavorable,
                        remaining_favorable,
                        selected_favorable):
+    """
+    Return the p-value of the number of selected favorable results being too high.
+    """
     unfavorable = remaining_unfavorable + selected_unfavorable
     favorable = remaining_favorable + selected_favorable
     selected = selected_unfavorable + selected_favorable
