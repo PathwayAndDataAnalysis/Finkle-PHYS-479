@@ -1,4 +1,5 @@
 import p_values
+import sequence_search
 
 
 def hypergeometric_test():
@@ -44,6 +45,28 @@ def hypergeometric_test():
         print("Accepted", *accepted_p_values)
         print("Found   ", enrichment_p_value, "", deficiency_p_value)
         print()
-hypergeometric_test()
+
+
+def windowed_sequence_test():
+    gene_names = ["UL38", "CVC1", "U69", "nef"]
+    site_numbers = [1, 2, 3, 4]
+    window_sizes = [3, 4, 5, 6]
+    windowed_sequences = ["T T H S T A A",
+                          "Q E V L S N E E A",
+                          "L K K Q I S A C S D M",
+                          "D G V G A A S R D L E K H"]
+    print()
+    for name, number, size, sequence in zip(gene_names, site_numbers,
+                                            window_sizes, windowed_sequences):
+        print("Gene:    ", name)
+        print("Accepted:", sequence)
+        print("Found:   ", *sequence_search.windowed_sequence(name, number, size))
+        print()
+
+        
+#hypergeometric_test()
+windowed_sequence_test()
+
+
         
                            

@@ -38,16 +38,3 @@ def save_names_and_sequences(names, sequences):
         for name, index in names_and_indices:
             names_file.write(name + "\n")
             sequences_file.write(sequences[index] + "\n")
-        
-            
-def get_sequence(gene_name):
-    with open('gene_names.txt') as gene_names:
-        for i, name in gene_names:
-            if name == gene_name:
-                sequence_number = i
-                break
-    with open ('raw_sequences.txt') as sequences:
-        for i, sequence in sequences:
-            if i == sequence_number:
-                return sequence
-        
