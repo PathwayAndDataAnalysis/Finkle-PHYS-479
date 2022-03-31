@@ -1,5 +1,6 @@
-import p_values
+#import p_values
 import sequence_search
+import scipy
 
 
 def hypergeometric_test():
@@ -41,20 +42,24 @@ def hypergeometric_test():
         enrichment_p_value = p_values.enrichment_p_value(*table)
         print(*table[:2])
         print(*table[2:])
-        print("        Enrichment         |     Deficiency")
+        print("           Enrichment      |     Deficiency")
         print("Accepted", *accepted_p_values)
         print("Found   ", enrichment_p_value, "", deficiency_p_value)
-        print()
-
+        fisher_table = [[table[0], table[1]],
+                        [table[2], table[3]]]
+        right = scipy.stats.fisher_exact(fisher_table, 'less')[1]
+        left = scipy.stats.fisher_exact(fisher_table, 'greater')[1]
+        print(left, right)
 
 def windowed_sequence_test():
-    gene_names = ["UL38", "CVC1", "U69", "nef"]
-    site_numbers = [1, 2, 3, 4]
-    window_sizes = [3, 4, 5, 6]
+    gene_names = ["UL38", "CVC1", "U69", "nef", "RTN4"]
+    site_numbers = [1, 2, 3, 4, 107]
+    window_sizes = [3, 4, 5, 6, 5]
     windowed_sequences = ["T T H S T A A",
                           "Q E V L S N E E A",
                           "L K K Q I S A C S D M",
-                          "D G V G A A S R D L E K H"]
+                          "D G V G A A S R D L E K H",
+                          "P E R Q P S W D P S P"]
     print()
     for name, number, size, sequence in zip(gene_names, site_numbers,
                                             window_sizes, windowed_sequences):
@@ -63,8 +68,10 @@ def windowed_sequence_test():
         print("Found:   ", *sequence_search.windowed_sequence(name, number, size))
         print()
 
-        
+print("p-value")        
 #hypergeometric_test()
+print()
+print("Windowed sequence")
 windowed_sequence_test()
 
 
