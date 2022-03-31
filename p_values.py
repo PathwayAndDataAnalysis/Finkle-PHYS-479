@@ -16,7 +16,7 @@ def deficiency_p_value(remaining_unfavorable,
     trials = unfavorable + favorable
     least_favorable = max(0, selected + favorable - trials)
     less_favorable = [i for i in range(least_favorable, selected_favorable + 1)]
-    return sum(hypergeom.pmf(less_favorable, trials, selected_favorable, selected))
+    return sum(hypergeom.pmf(less_favorable, trials, selected_favorable, selected)))
 
 
 def enrichment_p_value(remaining_unfavorable,
