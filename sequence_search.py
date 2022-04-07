@@ -1,12 +1,17 @@
-def get_sequence(gene_name):
-    """Return the index of the named gene in the database."""
+def get_sequences(gene_names):
+    """Return the sequences of the named genes in the database."""
     with open('data/gene_names.txt') as f:
-        gene_names = [line[:-1] for line in f.readlines()]
-        sequence_index = gene_names.index(gene_name)
-    with open ('data/raw_sequences.txt') as sequences:
-        for i, sequence in enumerate(sequences):
-            if i == sequence_index:
-                return sequence
+        lines = f.readlines()
+    gene_index_dictionary = {line[:-1] : i for i, line in enumerate(lines)}
+    with open ('data/raw_sequences.txt') as f:
+        sequences = f.readlines()
+    results = []
+    for i, name in enumerate(gene_names):
+        try:
+            results.append(sequences[gene_index_dictionary[name]])
+        except:
+            continue
+    return results
 
 
 def windowed_sequence(gene_name, site_number, window_width):

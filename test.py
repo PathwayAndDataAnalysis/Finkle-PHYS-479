@@ -1,6 +1,8 @@
 #import p_values
-import sequence_search
-import scipy
+#import sequence_search
+#import scipy
+
+import ranked_sequences
 
 
 def hypergeometric_test():
@@ -28,11 +30,9 @@ def hypergeometric_test():
     The deficiency p-value should be 0.0341612031176084
     """
     tables = [[4, 6, 6, 4],
-              [20, 30, 25, 20],
               [15, 8, 20, 42],
               [21, 20, 34, 13]]
     accepted_p_values_list = [[0.9105522960012121, 0.3281408993483296],
-                              [0.7766662300662146, 0.357198690677301],
                               [0.006445865568610187, 0.9985899806396821],
                               [0.9883420938210076, 0.0341612031176084]]
     failures = 0
@@ -68,11 +68,16 @@ def windowed_sequence_test():
         print("Found:   ", *sequence_search.windowed_sequence(name, number, size))
         print()
 
-print("p-value")        
+
+def ranked_sequence_test():
+    ranked_sequences.ranked_sequences("data/sample-data.txt")
+
+ranked_sequence_test()
+#print("p-value")        
 #hypergeometric_test()
-print()
-print("Windowed sequence")
-windowed_sequence_test()
+#print()
+#print("Windowed sequence")
+#windowed_sequence_test()
 
 
         
