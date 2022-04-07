@@ -1,6 +1,6 @@
 import p_values
 import sequence_search
-import ranked_sequences
+import windowed_ranked_sequences
 
 import scipy
 
@@ -66,17 +66,22 @@ def windowed_sequence_test():
 
 
 def windowed_ranked_sequence_test():
-    for sequence in ranked_sequences.windowed_ranked_sequences(
-        "test_data/ranked_sequences_test_data.txt", 5):
-        print(sequence)
-    
-print("\nwindowed ranked sequence\n")
-windowed_ranked_sequence_test()
-print("\np-value\n")        
-hypergeometric_test()
-print("\nWindowed sequence\n")
-windowed_sequence_test()
+    expected = ["SQKEPSEVPTP","NDPRCSTSNNR","KGVSMSLPSSP","LGSTKSLNHSK"]
+    found = windowed_ranked_sequences.windowed_ranked_sequences(
+        "test_data/ranked_sequences_test_data.txt", 5)
+    for expected_sequence, found_sequence in zip(expected, found):
+        print("Expected:", expected_sequence)
+        print("Found:   ", found_sequence)
+        print()
 
 
+def main():
+    print("\n\nP-Value")        
+    hypergeometric_test()
+    print("\n\nWindowed Sequence")
+    windowed_sequence_test()
+    print("\n\nWindowed Ranked Sequence\n")
+    windowed_ranked_sequence_test()
+if __name__ == "__main__": main()
         
                            
