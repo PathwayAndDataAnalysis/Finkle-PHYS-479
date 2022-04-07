@@ -6,7 +6,7 @@ def get_sequences(gene_names):
     with open ('data/raw_sequences.txt') as f:
         sequences = f.readlines()
     results = []
-    for i, name in enumerate(gene_names):
+    for name in gene_names:
         try:
             results.append(sequences[gene_index_dictionary[name]])
         except:
@@ -14,17 +14,14 @@ def get_sequences(gene_names):
     return results
 
 
-def windowed_sequence(gene_name, site_number, window_width):
+def windowed_sequence(sequence, site_number, window_width):
     """
     Return a view of sequences aligned by phosphorylation site and limited by
     a window width to either site of it.
     """
     site_index, site_count = 0, 0
-    sequence = get_sequence(gene_name)
-    windowed_sequence = []
     for i, letter in enumerate(sequence):
         if letter.upper() == "S": site_count += 1
         if site_count == site_number: site_index = i; break
-    for i in range(site_index - window_width, site_index + window_width + 1):
-        windowed_sequence.append(sequence[i])
-    return windowed_sequence
+    left = site_index - window_width; right = site_index + window_width + 1
+    return sequence[left:right]

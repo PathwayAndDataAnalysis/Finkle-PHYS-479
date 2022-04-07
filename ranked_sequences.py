@@ -1,12 +1,12 @@
 import sequence_search
-import time
 
 
-def ranked_sequences(path):
+def windowed_ranked_sequences(path, window_width):
     with open(path) as f:
-        lines = f.readlines()[1:]
-        
-    p_values = [float("".join(line.split("\t")[-1])) for line in lines]
+        rows = [line.split("\t") for line in f.readlines()[1:]]
+
+    p_values = [float(row[-1]) for row in rows]
+    site_numbers = [int(row[2][1:]) for row in rows]
 
     original_order = {p_value : i for i, p_value in enumerate(p_values)}
 
@@ -17,8 +17,12 @@ def ranked_sequences(path):
         else: positive_p_values.append(p_value)
 
     sorted_p_values = positive_p_values + negative_p_values
-    ranked_list = [lines[original_order[p_value]] for p_value in sorted_p_values]
+    names = [rows[original_order[p_value]][1] for p_value in sorted_p_values]
 
-    names = [line.split("\t")[1] for line in ranked_list]
+    sequences = sequence_search.get_sequences(names)
+    return [sequence_search.windowed_sequence(sequence, site_number, window_width)
+            for sequence, site_number in zip(sequences, site_numbers)]
+    
 
-    return sequence_search.get_sequences(names)
+
+    

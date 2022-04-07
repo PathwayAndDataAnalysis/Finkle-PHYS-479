@@ -25,55 +25,57 @@ def hypergeometric_test():
     The enrichment p-value should be 0.9883420938210076
     The deficiency p-value should be 0.0341612031176084
     """
-    tables = [[4, 6, 6, 4],
-              [15, 8, 20, 42],
-              [21, 20, 34, 13]]
+    tables = [[[4, 6], [6, 4]],
+              [[15, 8], [20, 42]],
+              [[21, 20], [34, 13]]]
     accepted_p_values_list = [[0.9105522960012121, 0.3281408993483296],
                               [0.006445865568610187, 0.9985899806396821],
                               [0.9883420938210076, 0.0341612031176084]]
     failures = 0
-    print()
     for table, accepted_p_values in zip(tables, accepted_p_values_list):
-        deficiency_p_value = p_values.deficiency_p_value(*table)
-        enrichment_p_value = p_values.enrichment_p_value(*table)
-        print(*table[:2])
-        print(*table[2:])
+        deficiency_p_value = scipy.stats.fisher_exact(table, 'less')[1]
+        enrichment_p_value = scipy.stats.fisher_exact(table, 'greater')[1]
+        print()
+        print(table[0])
+        print(table[1])
         print("           Enrichment      |     Deficiency")
         print("Accepted", *accepted_p_values)
-        print("Found   ", enrichment_p_value, "", deficiency_p_value)
-        fisher_table = [[table[0], table[1]],
-                        [table[2], table[3]]]
-        right = scipy.stats.fisher_exact(fisher_table, 'less')[1]
-        left = scipy.stats.fisher_exact(fisher_table, 'greater')[1]
-        print(left, right)
+        print("Found   ", enrichment_p_value, deficiency_p_value)
+
 
 def windowed_sequence_test():
-    gene_names = ["UL38", "CVC1", "U69", "nef", "RTN4"]
-    site_numbers = [1, 2, 3, 4, 107]
+    gene_names = ["ADAM2", "MCU", "RYR3", "TG", "KCP"]
+    site_numbers = [1, 2, 3, 4, 5]
     window_sizes = [3, 4, 5, 6, 5]
-    windowed_sequences = ["T T H S T A A",
-                          "Q E V L S N E E A",
-                          "L K K Q I S A C S D M",
-                          "D G V G A A S R D L E K H",
-                          "P E R Q P S W D P S P"]
-    print()
-    for name, number, size, sequence in zip(gene_names, site_numbers,
-                                            window_sizes, windowed_sequences):
-        print("Gene:    ", name)
-        print("Accepted:", sequence)
-        print("Found:   ", *sequence_search.windowed_sequence(name, number, size))
+    accepted_windowed_sequences = ["F L L S G L G",
+                                   "L L L L S S R G G",
+                                   "L E Q S L S V R A L Q",
+                                   "C Q N D G R S C W C V G A",
+                                   "V R Q L E S C E C H P"]
+
+    whole_sequences = sequence_search.get_sequences(gene_names)
+    for name, number, size, whole_sequence, accepted_windowed_sequence in zip(
+        gene_names, site_numbers, window_sizes, whole_sequences,
+        accepted_windowed_sequences):
+
         print()
+        print("Gene:    ", name)
+        print("Accepted:", accepted_windowed_sequence)
+        print("Found:   ", *sequence_search.windowed_sequence(whole_sequence, number, size))
+        
 
 
-def ranked_sequence_test():
-    ranked_sequences.ranked_sequences("data/sample-data.txt")
-
-#ranked_sequence_test()
-#print("p-value")        
-#hypergeometric_test()
-#print()
-#print("Windowed sequence")
-#windowed_sequence_test()
+def windowed_ranked_sequence_test():
+    for sequence in ranked_sequences.windowed_ranked_sequences(
+        "test_data/ranked_sequences_test_data.txt", 5):
+        print(sequence)
+    
+print("\nwindowed ranked sequence\n")
+windowed_ranked_sequence_test()
+print("\np-value\n")        
+hypergeometric_test()
+print("\nWindowed sequence\n")
+windowed_sequence_test()
 
 
         
