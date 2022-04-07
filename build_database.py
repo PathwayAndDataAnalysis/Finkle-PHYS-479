@@ -14,16 +14,17 @@ def extract_names_and_sequences(gene_list):
     of gene names and sequences.
     """
     names, sequences = [], []
-    greatest_name_length = 0
-    greatest_sequence_length = 0
-    for gene_entry in gene_list[1:]:
-        lines = gene_entry.split("\n")
-        gene_annotation = lines[0]
-        if "OS=Human" not in gene_annotation: continue
-        if "GN=" not in gene_annotation: continue
-        else: gene_name = gene_annotation.split("GN=")[1].split(" ")[0]
+    unique_names = set()
+    for entry in gene_list[1:]:
+        lines = entry.split("\n")
+        annotation = lines[0]
+        if not ("OS=Homo sapiens" in annotation and "GN=" in annotation): continue
+        print(annotation)
+        name = annotation.split("GN=")[1].split(" ")[0]
+        if name in unique_names: continue
+        unique_names.add(name)
         fasta_sequence = "".join(lines[1:])
-        names.append(gene_name)
+        names.append(name)
         sequences.append(fasta_sequence)
     return names, sequences
         
