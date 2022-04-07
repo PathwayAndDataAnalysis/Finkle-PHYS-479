@@ -21,7 +21,7 @@ def sequence_p_values(selected_sequences, remaining_sequences):
             table = [[remaining_rows - remaining_letter_counts[column],
                      remaining_letter_counts[column]],
                      [selected_rows - selected_letter_counts[column],
-                     selected_letter_counts[column]]
+                     selected_letter_counts[column]]]
             enrichment_p_values[column].append(scipy.stats.fisher_exact(table, 'less')[1])
             deficiency_p_values[column].append(scipy.stats.fisher_exact(table, 'greater')[1])
     return enrichment_p_values, deficiency_p_values

@@ -1,8 +1,8 @@
-#import p_values
-#import sequence_search
-#import scipy
-
+import p_values
+import sequence_search
 import ranked_sequences
+
+import scipy
 
 
 def hypergeometric_test():
@@ -16,10 +16,6 @@ def hypergeometric_test():
     Then if a = 4, b = 6, c = 6, d = 4,
     The enrichment p-value should be 0.9105522960012121
     The deficiency p-value should be 0.3281408993483296
-
-    If a = 20, b = 30, c = 25, d = 30,
-    The enrichment p-value should be 0.7766662300662146
-    The deficiency p-value should be 0.357198690677301
 
     If a = 15, b = 8, c = 20, d = 42
     The enrichment p-value should be 0.006445865568610187
@@ -72,7 +68,7 @@ def windowed_sequence_test():
 def ranked_sequence_test():
     ranked_sequences.ranked_sequences("data/sample-data.txt")
 
-ranked_sequence_test()
+#ranked_sequence_test()
 #print("p-value")        
 #hypergeometric_test()
 #print()

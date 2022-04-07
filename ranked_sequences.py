@@ -16,8 +16,6 @@ def ranked_sequences(path):
         if p_value < 0: negative_p_values.append(p_value)
         else: positive_p_values.append(p_value)
 
-    negative_p_values.reverse()
-
     sorted_p_values = positive_p_values + negative_p_values
     ranked_list = [lines[original_order[p_value]] for p_value in sorted_p_values]
 
