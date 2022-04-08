@@ -14,14 +14,11 @@ def get_sequences(gene_names):
     return results
 
 
-def windowed_sequence(sequence, site_number, window_width):
+def windowed_sequence(sequence, site_index, window_width):
     """
     Return a view of sequences aligned by phosphorylation site and limited by
     a window width to either site of it.
     """
-    site_index, site_count = 0, 0
-    for i, letter in enumerate(sequence):
-        if letter.upper() == "S": site_count += 1
-        if site_count == site_number: site_index = i; break
     left = site_index - window_width; right = site_index + window_width + 1
+    if left < 0 or right > len(sequence): print("ding")
     return sequence[left:right]

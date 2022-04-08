@@ -45,13 +45,13 @@ def hypergeometric_test():
 
 def windowed_sequence_test():
     gene_names = ["ADAM2", "MCU", "RYR3", "TG", "KCP"]
-    site_numbers = [1, 2, 3, 4, 5]
+    site_numbers = [10, 20, 30, 40, 50]
     window_sizes = [3, 4, 5, 6, 5]
-    accepted_windowed_sequences = ["F L L S G L G",
-                                   "L L L L S S R G G",
-                                   "L E Q S L S V R A L Q",
-                                   "C Q N D G R S C W C V G A",
-                                   "V R Q L E S C E C H P"]
+    accepted_windowed_sequences = ["L S G L G G L",
+                                   "G G G G G G A G G",
+                                   "I A T I H K E Q R K F",
+                                   "E L Q R E T A F L K Q A D",
+                                   "A G N S Q E Q W H P L"]
 
     whole_sequences = sequence_search.get_sequences(gene_names)
     for name, number, size, whole_sequence, accepted_windowed_sequence in zip(
@@ -62,11 +62,10 @@ def windowed_sequence_test():
         print("Gene:    ", name)
         print("Accepted:", accepted_windowed_sequence)
         print("Found:   ", *sequence_search.windowed_sequence(whole_sequence, number, size))
-        
 
 
 def windowed_ranked_sequence_test():
-    expected = ["SQKEPSEVPTP","NDPRCSTSNNR","KGVSMSLPSSP","LGSTKSLNHSK"]
+    expected = ["PSEVPTPKRPR","SLVAASPTLSP","RADNCSPVAEE","YPQSRKLSYEI"]
     found = windowed_ranked_sequences.windowed_ranked_sequences(
         "test_data/ranked_sequences_test_data.txt", 5)
     for expected_sequence, found_sequence in zip(expected, found):
