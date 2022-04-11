@@ -18,6 +18,8 @@ To use the second feature, import p_values into your python file and call p_valu
 
 ## Test Examples
 
+To run the test, change directories to the file containing the code and type python3 -m test
+
 p_values.hypergeometric_test(selected_sequences, remaining_sequences)
 
 Assume the letters a, b, c, and d represent the counts as displayed below.
