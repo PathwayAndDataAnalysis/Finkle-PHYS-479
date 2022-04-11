@@ -19,6 +19,4 @@ def windowed_sequence(sequence, site_index, window_width):
     Return a view of sequences aligned by phosphorylation site and limited by
     a window width to either site of it.
     """
-    left = site_index - window_width; right = site_index + window_width + 1
-    if left < 0 or right > len(sequence): print("ding")
-    return sequence[left:right]
+    return sequence[site_index - window_width - 1 : site_index + window_width]

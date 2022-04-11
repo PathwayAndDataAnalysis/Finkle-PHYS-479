@@ -44,24 +44,26 @@ def hypergeometric_test():
 
 
 def windowed_sequence_test():
-    gene_names = ["ADAM2", "MCU", "RYR3", "TG", "KCP"]
-    site_numbers = [10, 20, 30, 40, 50]
-    window_sizes = [3, 4, 5, 6, 5]
-    accepted_windowed_sequences = ["L S G L G G L",
-                                   "G G G G G G A G G",
-                                   "I A T I H K E Q R K F",
-                                   "E L Q R E T A F L K Q A D",
-                                   "A G N S Q E Q W H P L"]
+    gene_names = ["ADAM2", "MCU", "RYR3", "TG", "KCP", "RTN4"]
+    print(sequence_search.get_sequences(["RTN4"]))
+    site_indexes = [10, 20, 30, 40, 50, 107]
+    window_sizes = [3, 4, 5, 6, 5, 5]
+    accepted_windowed_sequences = ["L L S G L G G",
+                                   "R G G G G G G A G",
+                                   "C I A T I H K E Q R K",
+                                   "C E L Q R E T A F L K Q A",
+                                   "L A G N S Q E Q W H P",
+                                   "P E R Q P S W D P S P"]
 
     whole_sequences = sequence_search.get_sequences(gene_names)
-    for name, number, size, whole_sequence, accepted_windowed_sequence in zip(
-        gene_names, site_numbers, window_sizes, whole_sequences,
+    for name, index, size, whole_sequence, accepted_windowed_sequence in zip(
+        gene_names, site_indexes, window_sizes, whole_sequences,
         accepted_windowed_sequences):
 
         print()
         print("Gene:    ", name)
         print("Accepted:", accepted_windowed_sequence)
-        print("Found:   ", *sequence_search.windowed_sequence(whole_sequence, number, size))
+        print("Found:   ", *sequence_search.windowed_sequence(whole_sequence, index, size))
 
 
 def windowed_ranked_sequence_test():
