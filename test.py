@@ -1,6 +1,7 @@
 import p_values
 import sequence_search
 import windowed_ranked_sequences
+import processing
 
 import scipy
 
@@ -45,7 +46,6 @@ def hypergeometric_test():
 
 def windowed_sequence_test():
     gene_names = ["ADAM2", "MCU", "RYR3", "TG", "KCP", "RTN4"]
-    print(sequence_search.get_sequences(["RTN4"]))
     site_indexes = [10, 20, 30, 40, 50, 107]
     window_sizes = [3, 4, 5, 6, 5, 5]
     accepted_windowed_sequences = ["L L S G L G G",
@@ -67,13 +67,21 @@ def windowed_sequence_test():
 
 
 def windowed_ranked_sequence_test():
-    expected = ["PSEVPTPKRPR","SLVAASPTLSP","RADNCSPVAEE","YPQSRKLSYEI"]
+    expected = ["EPSEVPTPKRP","LSLVAASPTLS","RRADNCSPVAE","PPYPQSRKLSY"]
     found = windowed_ranked_sequences.windowed_ranked_sequences(
         "test_data/ranked_sequences_test_data.txt", 5)
     for expected_sequence, found_sequence in zip(expected, found):
         print("Expected:", expected_sequence)
         print("Found:   ", found_sequence)
         print()
+
+
+def amino_acid_substitution_test():
+    sequence = "ARNDCEQGHILKMFPSTWYV"
+    print("Sequence:             ", sequence)
+    print("Expected substitution: AKQDCDQAHIIKIFPSSWFI")
+    print("Found substitution:   ",
+          "".join(processing.substitute_amino_acids(sequence)))
 
 
 def main():
@@ -83,6 +91,8 @@ def main():
     windowed_sequence_test()
     print("\n\nWindowed Ranked Sequence\n")
     windowed_ranked_sequence_test()
+    print("\nSubstitution test\n")
+    amino_acid_substitution_test()
 if __name__ == "__main__": main()
         
                            

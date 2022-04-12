@@ -33,7 +33,6 @@ def save_names_and_sequences(names, sequences):
     
     """
     names_and_indices = [[name, n] for n, name in enumerate(names)]
-    #names_and_indices.sort()
     with open('data/raw_sequences.txt', 'w') as sequences_file, open('data/gene_names.txt', 'w') as names_file:
         for name, index in names_and_indices:
             names_file.write(name + "\n")
