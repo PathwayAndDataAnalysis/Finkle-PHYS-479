@@ -22,10 +22,17 @@ def filter_sequences(requirements, sequences):
     )
     """
     filtered_sequences = []
-    for sequence in sequences:
+    middle = len(sequences[0]) // 2
+    for sequence in sequences:        
+        passes_filter = True
         for row in requirements:
-            passes_filter = True
-            for i in range(1, len(row) - 1, 2):
-                if sequence[row[0]] == row[i] != row[i+1]:
+            letter = sequence[middle + row[0]]            
+            for prohibited_character in row[1]:
+                if letter == prohibited_character:
                     passes_filter = False; break
-            if passes_filter: filtered_sequences.append(sequence)
+            if not passes_filter: break
+            for required_character in row[2]:               
+                if not letter == required_character:
+                    passes_filter = False; break            
+        if passes_filter: filtered_sequences.append(sequence)
+    return filtered_sequences

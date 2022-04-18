@@ -2,6 +2,7 @@ import p_values
 import sequence_search
 import windowed_ranked_sequences
 import processing
+import analysis
 
 import scipy
 
@@ -84,6 +85,40 @@ def amino_acid_substitution_test():
           "".join(processing.substitute_amino_acids(sequence)))
 
 
+def letter_counts_test():
+    columns = ["HHK", "DDY", "JYH", "SSD", "YTH"]
+    expected_count_list = [["H", 2, "K", 1],
+                           ["D", 2, "Y", 1],
+                           ["J", 1, "Y", 1, "H", 1],
+                           ["S", 2, "D", 1],
+                           ["Y", 1, "T", 1, "H", 1]]
+    expected_counts = [[0 for _ in range(ord("Z"))] for _ in range(5)]
+    for i, row in enumerate(expected_count_list):
+        for letter, count in zip(row[::2], row[1::2]):
+            expected_counts[i][ord(letter)] = count
+    found_counts = analysis.letter_counts(columns)
+    for i, row in enumerate(found_counts):
+        for j, count in enumerate(row):
+            if expected_counts[i][j] > 0 or count > 0:
+                print("Expected:", chr(j), expected_counts[i][j])
+                print("Found:", chr(j), count)
+                print()
+            if count != expected_counts[i][j]:
+                print("TEST FAILED!")
+                print()
+
+
+def filtered_sequences_test():
+    sequences = ["DHFJD", "DHFGT", "FGHTU", "KJFHY", "DHFHH", "DJFSP"]
+    requirements = ((-2, [], ["D"]),
+                    (1, ["J", "S"], []))
+    expected_filtered_sequences = ["DHFGT", "DHFHH"]
+    found_filtered_sequences = processing.filter_sequences(requirements,
+                                                           sequences)
+    print("Expected:", expected_filtered_sequences)
+    print("Found:   ", found_filtered_sequences)
+            
+
 def main():
     print("\n\nP-Value")        
     hypergeometric_test()
@@ -93,6 +128,10 @@ def main():
     windowed_ranked_sequence_test()
     print("\nSubstitution test\n")
     amino_acid_substitution_test()
+    print("\nLetter Counts Test\n")
+    letter_counts_test()
+    print("\nFiltered Sequences Test\n")
+    filtered_sequences_test()
 if __name__ == "__main__": main()
         
                            

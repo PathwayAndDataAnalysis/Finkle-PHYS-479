@@ -41,9 +41,10 @@ def most_significant_p_values(sequences, column, letter, favorable):
     remaining_unfavorable = len(sequences) - favorable
     for selected, sequence in enumerate(reversed(sequences)):
         is_favorable = sequence[column] == letter
-        remaining_unfavorable -= !is_favorable
+        is_unfavorable = sequence[column] != letter
+        remaining_unfavorable -= is_unfavorable
         remaining_favorable -= is_favorable
-        selected_unfavorable += !is_favorable
+        selected_unfavorable += is_unfavorable
         selected_favorable += is_favorable
         table = [[selected_unfavorable, selected_favorable],
                  [remaining_unfavorable, remaining_favorable]]
@@ -56,9 +57,10 @@ def most_significant_p_values(sequences, column, letter, favorable):
     remaining_unfavorable = len(sequences) - favorable
     for selected, sequence in enumerate(sequences):
         is_favorable = sequence[column] == letter
-        remaining_unfavorable -= !is_favorable
+        is_unfavorable = sequence[column] != letter
+        remaining_unfavorable -= is_unfavorable
         remaining_favorable -= is_favorable
-        selected_unfavorable += !is_favorable
+        selected_unfavorable += is_unfavorable
         selected_favorable += is_favorable
         table = [[selected_unfavorable, selected_favorable],
                  [remaining_unfavorable, remaining_favorable]]
