@@ -69,5 +69,21 @@ def most_significant_p_values(sequences, column, letter, favorable):
                                      enrichment_p_value)
         
     return greatest_negative_p_value, least_positive_p_value
+
+
+def all_most_significant_p_values(sequences, letter_counts):
+    """
+    Return the the enrichments and deficiencies of each letter at each position
+    in the ranked sequences.
+    """
+    columns = len(sequences[0])
+    all_most_significant_p_values_list = [[] for _ in range(columns)]
+    for column in range(width):
+        for i, count in enumerate(letter_counts[column]["A":]):
+            all_most_significant_p_values_list[column].append(
+                [most_significant_p_values(sequences, column, chr(i), count)]
+            )
+    return all_most_significant_p_values_list
+    
         
    
