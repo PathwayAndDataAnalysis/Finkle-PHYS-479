@@ -117,9 +117,6 @@ def filtered_sequences_test():
                                                            sequences)
     print("Expected:", expected_filtered_sequences)
     print("Found:   ", found_filtered_sequences)
-            
-
-def enrichment
 
 
 def main():
