@@ -10,6 +10,7 @@ def sequence_p_values(selected_sequences, remaining_sequences):
     """
     letters = ["A", "G", "I", "L", "P", "V", "F", "W", "Y", "D", 
                "E", "R", "H", "K", "S", "T", "C", "M", "N", "Q"]
+    columns = len(selected_sequences)
     enrichment_p_values = [[] for _ in columns]
     deficiency_p_values = [[] for _ in columns]
     remaining_rows = len(remaining_sequences[0])
