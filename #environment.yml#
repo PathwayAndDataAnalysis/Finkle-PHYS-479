@@ -1,0 +1,7 @@
+name: base
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip==21.0.1
+prefix: /Users/Adam/opt/anaconda3
