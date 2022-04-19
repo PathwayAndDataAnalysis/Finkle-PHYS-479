@@ -316,6 +316,5 @@ dependencies:
   - zope.event=4.5.0=py38_0
   - zope.interface=5.1.2=py38haf1e3a3_0
   - zstd=1.4.5=h41d2c2f_0
-  - pip:
-    - pip==21.0.1
+  - pip==21.0.1
 prefix: /Users/Adam/opt/anaconda3
