@@ -3,20 +3,20 @@
 ## Work in progress: not feature complete or integrated
 
 ## Setup:
-1 Download Python
-2 Open your command line and keep it open
-3 Change directories to your Desktop
-4 Type: python3 -m venv your_project_name
-5 Type: source bin/activate
-6 Type: pip3 install scipy
-7 Open to the folder you have created
-8 Create a folder called Data
-9 Download the UniProt gene sequence database as a .fasta file
-10 Move the .fasta file to the Data folder you just created
-11 Return to your command line
-12 Type: python3 -m build_database
-13 Type: python3 -m test
-14 If all the expected and found results align, you are ready to use the module in your own Python code!
+- Download Python
+- Open your command line and keep it open
+- Change directories to your Desktop
+- Type: python3 -m venv your_project_name
+- Type: source bin/activate
+- Type: pip3 install scipy
+- Open to the folder you have created
+- Create a folder called Data
+- Download the UniProt gene sequence database as a .fasta file
+- Move the .fasta file to the Data folder you just created
+- Return to your command line
+- Type: python3 -m build_database
+- Type: python3 -m test
+- If all the expected and found results align, you are ready to use the module in your own Python code!
 
 
 This project has two features:
