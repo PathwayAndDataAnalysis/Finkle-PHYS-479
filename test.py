@@ -122,9 +122,7 @@ def filtered_sequences_test():
 
 def most_significant_p_values_test():
     path = "test_data/sample-phosphoproteomic-data.txt"
-    letter = "A"
-    window = 4; length = 2 * window
-    offset = 2
+    letter, window, index = "L", 4, 2
     
     names, sites, data_p_values = [], [], []
     with open(path) as f:
@@ -138,13 +136,42 @@ def most_significant_p_values_test():
     sequences = windowed_ranked_sequences.windowed_ranked_sequences(
         names, sites, data_p_values, window
     )
-    sequences = [sequence for sequence in sequences if len(sequence) >= length]
-    column = [sequence[offset] for sequence in sequences]
+    sequences = [sequence for sequence in sequences if len(sequence) >= 2*window]
+    column = [sequence[index] for sequence in sequences]
     favorable = analysis.column_letter_counts(column)[ord(letter)]
-    print(favorable)
-    print(p_values.most_significant_p_values(
-        sequences, offset, letter, favorable)
+    import time
+    start = time.time()
+    print(
+        "Most significiant p-values:",
+        p_values.most_significant_p_values(sequences, index, letter, favorable)
     )
+    print(round(time.time() - start, 2))
+
+
+def all_most_significant_p_values_test():
+    path = "test_data/sample-phosphoproteomic-data.txt"
+    window = 4; length = 2 * window
+    offset = 2
+    
+    names, sites, data_p_values = [], [], []
+    with open(path) as f:
+        for line in f.readlines()[1:]:
+            row = line.split("\t")
+            if row[3] == "P":
+                names.append(row[0].split("-")[0])
+                sites.append(int(row[2].split("|")[0][1:]))
+                data_p_values.append(float(row[5]))
+
+    sequences = windowed_ranked_sequences.windowed_ranked_sequences(
+        names, sites, data_p_values, window
+    )
+    sequences = [sequence for sequence in sequences if len(sequence) >= length]
+    columns = [[sequence[i] for sequence in sequences] for i in range(length)]
+    letter_counts = analysis.letter_counts(columns)
+    result = p_values.all_most_significant_p_values(sequences, letter_counts)
+    for i, row in enumerate(result): print(chr(i), row)
+        
+    
 
 
 def main():
@@ -155,6 +182,7 @@ def main():
     #print("\nLetter Counts Test\n"); letter_counts_test()
     #print("\nFiltered Sequences Test\n"); filtered_sequences_test()
     most_significant_p_values_test()
+    #all_most_significant_p_values_test()
 if __name__ == "__main__": main()
         
                            
