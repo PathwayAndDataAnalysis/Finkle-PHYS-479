@@ -97,6 +97,7 @@ def letter_counts_test():
         for letter, count in zip(row[::2], row[1::2]):
             expected_counts[i][ord(letter)] = count
     found_counts = analysis.letter_counts(columns)
+    print(found_counts)
     for i, row in enumerate(found_counts):
         for j, count in enumerate(row):
             if expected_counts[i][j] > 0 or count > 0:

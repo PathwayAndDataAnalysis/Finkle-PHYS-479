@@ -4,7 +4,7 @@ from scipy.stats import hypergeom
 def column_letter_counts(column):
     """Return an array of counts of letters in an amino acid column."""
     counts = [0 for _ in range(ord("Z"))]
-    for letter in column[ord("A"):]: counts[ord(letter)] += 1
+    for letter in column: counts[ord(letter)] += 1
     return counts
 
 
