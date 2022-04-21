@@ -3,6 +3,21 @@ import sequence_search
 from scipy.stats import fisher_exact
 
 
+def least_p_value(sequences, index, letter, total_favorable, alternative):
+    least_p_value, favorable, unfavorable, length = 1, 0, 0, len(sequences)
+    total_unfavorable = length - total_favorable
+    if alternative == "less": chosen_sequences = reversed(sequences[length//2:])
+    elif alternative == "greater": chosen_sequences = sequences[:length//2]
+    for i, sequence in enumerate(chosen_sequences):
+        if sequence[index] == letter: favorable += 1
+        else: unfavorable += 1
+        if i % 4 == 0:
+            table = [[total_unfavorable - unfavorable, unfavorable],
+                     [total_favorable - favorable, favorable]]
+            least_p_value = min(least_p_value, fisher_exact(table, alternative)[1])
+    return least_p_value
+
+
 def most_significant_p_values(sequences, index, letter, total_favorable):
     """
     Return the p-values of least absolute magnitude calculated by Fisher's
@@ -10,31 +25,8 @@ def most_significant_p_values(sequences, index, letter, total_favorable):
     least to greatest positive and then least to greatest negative, by sliding a
     threshold up from greatest negative and then  down from least positive.
     """
-    least_deficiency_p_value, least_enrichment_p_value = 1, 1
-    length = len(sequences)
-    total_unfavorable = length - total_favorable
-    
-    favorable, unfavorable = 0, 0
-    for i, sequence in enumerate(reversed(sequences[length//2:])):
-        if sequence[index] == letter: favorable += 1
-        else: unfavorable += 1
-        if not i % 4 == 0: continue
-        table = [[total_unfavorable - unfavorable, unfavorable],
-                 [total_favorable - favorable, favorable]]
-        least_deficiency_p_value = min(least_deficiency_p_value,
-                                       fisher_exact(table, 'less')[1])
-        
-    favorable, unfavorable = 0, 0
-    for i, sequence in enumerate(sequences[:length//2]):
-        if sequence[index] == letter: favorable += 1
-        else: unfavorable += 1
-        if not i % 4 == 0: continue
-        table = [[total_unfavorable - unfavorable, unfavorable],
-                 [total_favorable - favorable, favorable]]
-        least_enrichment_p_value = min(least_enrichment_p_value,
-                                       fisher_exact(table, 'greater')[1])
-        
-    return least_deficiency_p_value, least_enrichment_p_value
+    return (least_p_value(sequences, index, letter, total_favorable, "less"),
+            least_p_value(sequences, index, letter, total_favorable, "greater"))
 
 
 def all_most_significant_p_values(sequences, letter_counts):
