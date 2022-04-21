@@ -181,8 +181,8 @@ def main():
     #print("\nSubstitution test\n"); amino_acid_substitution_test()
     #print("\nLetter Counts Test\n"); letter_counts_test()
     #print("\nFiltered Sequences Test\n"); filtered_sequences_test()
-    most_significant_p_values_test()
-    #all_most_significant_p_values_test()
+    #most_significant_p_values_test()
+    all_most_significant_p_values_test()
 if __name__ == "__main__": main()
         
                            

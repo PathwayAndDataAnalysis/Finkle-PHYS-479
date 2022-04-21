@@ -37,12 +37,15 @@ def all_most_significant_p_values(sequences, letter_counts):
     columns = len(sequences[0])
     all_most_significant_p_values_list = [[] for _ in range(columns)]
     for column in range(columns):
+        if column == columns // 2: continue
+        print(column + 1, "/", columns - 1)
         for i, count in enumerate(letter_counts[column]):
             if count == 0:
                 all_most_significant_p_values_list[column].append((0,0)); continue
             values = most_significant_p_values(sequences, column, chr(i), count)
-            print(chr(i), values)
+            print(chr(i), f'{values[0]:.3f}', f'{values[1]:.3f}')
             all_most_significant_p_values_list[column].append(values)
+        print()
     return all_most_significant_p_values_list
     
         
