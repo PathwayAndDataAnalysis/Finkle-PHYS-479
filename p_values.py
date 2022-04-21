@@ -79,7 +79,7 @@ def all_most_significant_p_values(sequences, letter_counts):
     """
     columns = len(sequences[0])
     all_most_significant_p_values_list = [[] for _ in range(columns)]
-    for column in range(width):
+    for column in range(columns):
         for i, count in enumerate(letter_counts[column]["A":]):
             all_most_significant_p_values_list[column].append(
                 [most_significant_p_values(sequences, column, chr(i), count)]
