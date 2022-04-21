@@ -1,6 +1,6 @@
 import analysis
 import sequence_search
-import scipy
+from scipy.stats import fisher_exact
 
 
 def sequence_p_values(selected_sequences, remaining_sequences):
@@ -23,12 +23,12 @@ def sequence_p_values(selected_sequences, remaining_sequences):
                      remaining_letter_counts[column]],
                      [selected_rows - selected_letter_counts[column],
                      selected_letter_counts[column]]]
-            enrichment_p_values[column].append(scipy.stats.fisher_exact(table, 'less')[1])
-            deficiency_p_values[column].append(scipy.stats.fisher_exact(table, 'greater')[1])
+            enrichment_p_values[column].append(fisher_exact(table, 'less')[1])
+            deficiency_p_values[column].append(fisher_exact(table, 'greater')[1])
     return enrichment_p_values, deficiency_p_values
 
 
-def most_significant_p_values(sequences, column, letter, favorable):
+def most_significant_p_values(sequences, column_index, letter, favorable):
     """
     Return the p-values of least absolute magnitude calculated by Fisher's
     exact test on a list of windowed sequences ranked by phenotypic p-value from
@@ -41,15 +41,15 @@ def most_significant_p_values(sequences, column, letter, favorable):
     remaining_favorable = favorable
     remaining_unfavorable = len(sequences) - favorable
     for selected, sequence in enumerate(reversed(sequences)):
-        is_favorable = sequence[column] == letter
-        is_unfavorable = sequence[column] != letter
+        is_favorable = sequence[column_index] == letter
+        is_unfavorable = sequence[column_index] != letter
         remaining_unfavorable -= is_unfavorable
         remaining_favorable -= is_favorable
         selected_unfavorable += is_unfavorable
         selected_favorable += is_favorable
         table = [[selected_unfavorable, selected_favorable],
                  [remaining_unfavorable, remaining_favorable]]
-        deficiency_p_value = scipy.fisher_exact(table, alternative = 'less')
+        deficiency_p_value = fisher_exact(table, alternative = 'less')[1]
         greatest_negative_p_value = max(greatest_negative_p_value,
                                         deficiency_p_value)
         
@@ -57,15 +57,15 @@ def most_significant_p_values(sequences, column, letter, favorable):
     remaining_favorable = favorable
     remaining_unfavorable = len(sequences) - favorable
     for selected, sequence in enumerate(sequences):
-        is_favorable = sequence[column] == letter
-        is_unfavorable = sequence[column] != letter
+        is_favorable = sequence[column_index] == letter
+        is_unfavorable = sequence[column_index] != letter
         remaining_unfavorable -= is_unfavorable
         remaining_favorable -= is_favorable
         selected_unfavorable += is_unfavorable
         selected_favorable += is_favorable
         table = [[selected_unfavorable, selected_favorable],
                  [remaining_unfavorable, remaining_favorable]]
-        enrichment_p_value = scipy.fisher_exact(table, alternative = 'greater')
+        enrichment_p_value = fisher_exact(table, alternative = 'greater')[1]
         least_positive_p_value = min(least_positive_p_value,
                                      enrichment_p_value)
         

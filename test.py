@@ -120,19 +120,41 @@ def filtered_sequences_test():
     print("Found:   ", found_filtered_sequences)
 
 
+def most_significant_p_values_test():
+    path = "test_data/sample-phosphoproteomic-data.txt"
+    letter = "A"
+    window = 4; length = 2 * window
+    offset = 2
+    
+    names, sites, data_p_values = [], [], []
+    with open(path) as f:
+        for line in f.readlines()[1:]:
+            row = line.split("\t")
+            if row[3] == "P":
+                names.append(row[0].split("-")[0])
+                sites.append(int(row[2].split("|")[0][1:]))
+                data_p_values.append(float(row[5]))
+    
+    sequences = windowed_ranked_sequences.windowed_ranked_sequences(
+        names, sites, data_p_values, window
+    )
+    sequences = [sequence for sequence in sequences if len(sequence) >= length]
+    column = [sequence[offset] for sequence in sequences]
+    favorable = analysis.column_letter_counts(column)[ord(letter)]
+    print(favorable)
+    print(p_values.most_significant_p_values(
+        sequences, offset, letter, favorable)
+    )
+
+
 def main():
-    print("\n\nP-Value")        
-    hypergeometric_test()
-    print("\n\nWindowed Sequence")
-    windowed_sequence_test()
-    print("\n\nWindowed Ranked Sequence\n")
-    windowed_ranked_sequence_test()
-    print("\nSubstitution test\n")
-    amino_acid_substitution_test()
-    print("\nLetter Counts Test\n")
-    letter_counts_test()
-    print("\nFiltered Sequences Test\n")
-    filtered_sequences_test()
+    #print("\n\nP-Value"); hypergeometric_test()
+    #print("\n\nWindowed Sequence"); windowed_sequence_test()
+    #print("\n\nWindowed Ranked Sequence\n"); windowed_ranked_sequence_test()
+    #print("\nSubstitution test\n"); amino_acid_substitution_test()
+    #print("\nLetter Counts Test\n"); letter_counts_test()
+    #print("\nFiltered Sequences Test\n"); filtered_sequences_test()
+    most_significant_p_values_test()
 if __name__ == "__main__": main()
         
                            
