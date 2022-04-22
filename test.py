@@ -172,7 +172,6 @@ def all_most_significant_p_values_test():
     columns = [[sequence[i] for sequence in sequences] for i in range(length)]
     letter_counts = analysis.letter_counts(columns)
     result = p_values.all_most_significant_p_values(sequences, letter_counts)
-    for i, row in enumerate(result): print(chr(i), row)
 
 
 def main():
@@ -182,8 +181,8 @@ def main():
     #print("\nSubstitution test\n"); amino_acid_substitution_test()
     #print("\nLetter Counts Test\n"); letter_counts_test()
     #print("\nFiltered Sequences Test\n"); filtered_sequences_test()
-    #most_significant_p_values_test()
-    all_most_significant_p_values_test()
+    #print("\nMost Significant P Values Test\n") most_significant_p_values_test()
+    print("\nAll Most Significant P Values Test\n"); all_most_significant_p_values_test()
 if __name__ == "__main__": main()
         
                            
