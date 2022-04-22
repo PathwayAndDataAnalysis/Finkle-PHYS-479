@@ -34,11 +34,11 @@ def all_most_significant_p_values(sequences, letter_counts):
     Return the the enrichments and deficiencies of each letter at each position
     in the ranked sequences.
     """
-    columns = len(sequences[0])
+    columns = len(sequences[0]); middle = columns // 2
     all_most_significant_p_values_list = [[] for _ in range(columns)]
     for column in range(columns):
-        if column == columns // 2: continue
-        print(column + 1, "/", columns - 1)
+        if column == middle: continue
+        print(-(middle - column))
         for i, count in enumerate(letter_counts[column]):
             if count == 0:
                 all_most_significant_p_values_list[column].append((0,0)); continue

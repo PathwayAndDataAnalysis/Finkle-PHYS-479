@@ -121,8 +121,9 @@ def filtered_sequences_test():
 
 
 def most_significant_p_values_test():
-    path = "test_data/sample-phosphoproteomic-data.txt"
+    data_path = "test_data/sample-phosphoproteomic-data.txt"
     letter, window, index = "L", 4, 2
+    length = 2 * window
     
     names, sites, data_p_values = [], [], []
     with open(path) as f:
@@ -132,11 +133,12 @@ def most_significant_p_values_test():
                 names.append(row[0].split("-")[0])
                 sites.append(int(row[2].split("|")[0][1:]))
                 data_p_values.append(float(row[5]))
-    
+                
     sequences = windowed_ranked_sequences.windowed_ranked_sequences(
         names, sites, data_p_values, window
     )
-    sequences = [sequence for sequence in sequences if len(sequence) >= 2*window]
+    sequences = [sequence for sequence in sequences if len(sequence) >= length]
+    sequences = processing.substitute_amino_acids(sequences)
     column = [sequence[index] for sequence in sequences]
     favorable = analysis.column_letter_counts(column)[ord(letter)]
     import time
@@ -150,7 +152,7 @@ def most_significant_p_values_test():
 
 def all_most_significant_p_values_test():
     path = "test_data/sample-phosphoproteomic-data.txt"
-    window = 4; length = 2 * window
+    window = 5; length = 2 * window + 1
     offset = 2
     
     names, sites, data_p_values = [], [], []
@@ -165,13 +167,12 @@ def all_most_significant_p_values_test():
     sequences = windowed_ranked_sequences.windowed_ranked_sequences(
         names, sites, data_p_values, window
     )
+    sequences = processing.substitute_amino_acids(sequences)
     sequences = [sequence for sequence in sequences if len(sequence) >= length]
     columns = [[sequence[i] for sequence in sequences] for i in range(length)]
     letter_counts = analysis.letter_counts(columns)
     result = p_values.all_most_significant_p_values(sequences, letter_counts)
     for i, row in enumerate(result): print(chr(i), row)
-        
-    
 
 
 def main():

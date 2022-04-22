@@ -8,7 +8,9 @@ def get_sequences(gene_names):
     results = []
     for name in gene_names:
         try:
-            results.append(sequences[gene_index_dictionary[name]])
+            result = sequences[gene_index_dictionary[name]]
+            if result[-1] == "\n": result = result[:-1]
+            results.append(result)
         except:
             continue
     return results
