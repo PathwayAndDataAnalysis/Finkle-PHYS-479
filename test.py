@@ -152,7 +152,7 @@ def most_significant_p_values_test():
 
 def all_most_significant_p_values_test():
     path = "test_data/sample-phosphoproteomic-data.txt"
-    window = 5; length = 2 * window + 1
+    window = 1; length = 2 * window + 1
     offset = 2
     
     names, sites, data_p_values = [], [], []
