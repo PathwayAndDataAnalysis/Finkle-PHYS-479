@@ -26,7 +26,7 @@ def least_p_value(sequences, index, letter, total_favorable, alternative):
                 best_table = table
                 best_threshold = threshold
     print(best_threshold, best_table, least_p_value,
-          fisher_exact(best_table, alternative)[0])
+          fisher_exact(best_table, alternative)[1])
     return least_p_value
 
 
