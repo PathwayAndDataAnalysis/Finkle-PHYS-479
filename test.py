@@ -151,9 +151,10 @@ def most_significant_p_values_test():
 
 
 def all_most_significant_p_values_test():
-    path = "test_data/sample-phosphoproteomic-data.txt"
+    path = "test_data/simulated-phosphoproteomic-data.txt"
     window = 1; length = 2 * window + 1
     offset = 2
+    step = 1024
     
     names, sites, data_p_values = [], [], []
     with open(path) as f:
@@ -171,7 +172,7 @@ def all_most_significant_p_values_test():
     sequences = [sequence for sequence in sequences if len(sequence) >= length]
     columns = [[sequence[i] for sequence in sequences] for i in range(length)]
     letter_counts = analysis.letter_counts(columns)
-    result = p_values.all_most_significant_p_values(sequences, letter_counts)
+    result = p_values.all_most_significant_p_values(sequences, letter_counts, step)
 
 
 def main():
