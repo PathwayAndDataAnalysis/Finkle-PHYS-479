@@ -250,6 +250,11 @@ def iterative_motif_search_test():
     sequences = [sequence for sequence in sequences if len(sequence) >= length]
     sequences = processing.substitute_amino_acids(sequences)
     
+    print("Key:")
+    print("motif => [newfound_motifs]")
+    print("(index, letter, presence)")
+    print("Index is relative to 0 at the left, letter is the amino acid,")
+    print("and presence is whether the acid must appear (True) or absent (False)")
     print(motif_search.motif_search(sequences, step, threshold))
     
                         
