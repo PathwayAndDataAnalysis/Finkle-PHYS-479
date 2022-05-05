@@ -2,11 +2,19 @@ import analysis
 import p_values
 import processing
 
-def motif_search(sequences, step, threshold, motif = None):
+import copy
+
+
+def match(sequence, index, letter, presence):
+    return (sequence[index] == letter) == presence
+
+
+def motif_search(passed_sequences, step, threshold, motif = None):
     """
     Return a directed acyclic graph of any motifs in the sequences.
     
-    :param sequences: the sequences of which motifs are to be graphed
+    :param passed_sequences: the sequences of which motifs are to be
+                             graphed
     :type sequences: list[str]
     :param step: the step size of letters by which to increment a
                  p-value sweep of a column
@@ -18,18 +26,15 @@ def motif_search(sequences, step, threshold, motif = None):
                   letter at the column
     :return: a directed acyclic graph of any motifs in the sequences
     """
-    
+
+    # create a deep copy of sequences
+    sequences = copy.deepcopy(passed_sequences)
+
+     
     # If a motif is given, exclude any sequence without it.
     if motif:
-        index, letter, requirement = motif
-        old_length = len(sequences)
-        for s, sequence in enumerate(sequences):
-            if sequence[index] == letter and requirement == False: 
-                del sequences[s]
-            elif sequence[index] != letter and requirement == True: 
-                del sequences[s]
-        # If no sequence has been excluded, instead return the motif
-        if len(sequences) == old_length: return motif
+        sequences = [sequence for sequence in sequences
+                     if match(sequence, *motif)]
     
     # Calculate the p values of the letter counts of the remaining sequences
     columns = tuple(tuple(sequence[i] for sequence in sequences) 
@@ -40,16 +45,19 @@ def motif_search(sequences, step, threshold, motif = None):
     )
     
     # Find any new motifs
-    motifs = []
-    for c, column in enumerate(results):
-        for p, pair in enumerate(column):
-            if pair[0] < threshold and pair[1] < threshold: continue
-            if pair[0] < threshold: motifs.append(tuple((c, p, False)))
-            elif pair[1] < threshold: motifs.append(tuple((c, p, True)))
-    
-    # If no new motif has been found, return the given motif
-    if motifs == []: return motif
-    # Return the next branch in the graph for each new motif
-    return {motif : motif_search(sequences, step, threshold, motif) 
-                 for motif in motifs}
+    newfound_motifs = []
+    for index, column in enumerate(results):
+        for letter, p_value_pair in enumerate(column):
+            if p_value_pair[0] > threshold or p_value_pair[1] > threshold:
+                if p_value_pair[0] < threshold:
+                    newfound_motifs.append(tuple((index, chr(letter), False)))
+                if p_value_pair[1] < threshold:
+                    newfound_motifs.append(tuple((index, chr(letter), True)))
+    print()
+    print(len(sequences))
+    print(motif, "=>", newfound_motifs)
+    # If no new motif has been found, return the given motif,
+    # Else, return the next branch in the graph for each new motif
+    return {motif : motif_search(sequences, step, threshold, newfound_motif)
+            for newfound_motif in newfound_motifs} if newfound_motifs else motif
         

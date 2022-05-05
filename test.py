@@ -232,9 +232,9 @@ def null_distribution_test():
 
 def iterative_motif_search_test():
     path = "test_data/simulated-phosphoproteomic-data.txt"
-    window = 1; length = 2 * window + 1
+    window = 5; length = 2 * window + 1
     step = 1024
-    threshold = 0.005
+    threshold = 0.0005
     
     names, indices, = [], []
     with open(path) as f:
