@@ -21,8 +21,13 @@ def motif_search(sequences, step, threshold, motif = None):
     
     # If a motif is given, exclude any sequence without it.
     if motif:
+        index, letter, requirement = motif
         old_length = len(sequences)
-        sequences = processing.filtered_sequences(sequences, (motif,))
+        for s, sequence in enumerate(sequences):
+            if sequence[index] == letter and requirement == False: 
+                del sequences[s]
+            elif sequence[index] != letter and requirement == True: 
+                del sequences[s]
         # If no sequence has been excluded, instead return the motif
         if len(sequences) == old_length: return motif
     
