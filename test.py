@@ -1,15 +1,18 @@
 import p_values
 import sequence_search
-import windowed_ranked_sequences
 import processing
 import analysis
+import motif_search
+
+import random
 
 import scipy
 
 
 def hypergeometric_test():
     """
-    Assume the letters a, b, c, and d represent the counts as displayed below.
+    Assume the letters a, b, c, and d represent the counts 
+    as displayed below.
 
       - +
     - a b
@@ -64,12 +67,13 @@ def windowed_sequence_test():
         print()
         print("Gene:    ", name)
         print("Accepted:", accepted_windowed_sequence)
-        print("Found:   ", *sequence_search.windowed_sequence(whole_sequence, index, size))
+        print("Found:   ", *sequence_search.windowed_sequence(
+            whole_sequence, index, size))
 
 
-def windowed_ranked_sequence_test():
+def ranked_windowed_sequences_test():
     expected = ["EPSEVPTPKRP","LSLVAASPTLS","RRADNCSPVAE","PPYPQSRKLSY"]
-    found = windowed_ranked_sequences.windowed_ranked_sequences(
+    found = sequence_search.ranked_windowed_sequences(
         "test_data/ranked_sequences_test_data.txt", 5)
     for expected_sequence, found_sequence in zip(expected, found):
         print("Expected:", expected_sequence)
@@ -125,17 +129,17 @@ def most_significant_p_values_test():
     letter, window, index = "L", 4, 2
     length = 2 * window
     
-    names, sites, data_p_values = [], [], []
+    names, indices, data_p_values = [], [], []
     with open(path) as f:
         for line in f.readlines()[1:]:
             row = line.split("\t")
             if row[3] == "P":
                 names.append(row[0].split("-")[0])
-                sites.append(int(row[2].split("|")[0][1:]))
+                indices.append(int(row[2].split("|")[0][1:]))
                 data_p_values.append(float(row[5]))
                 
-    sequences = windowed_ranked_sequences.windowed_ranked_sequences(
-        names, sites, data_p_values, window
+    sequences = sequence_search.ranked_windowed_sequences(
+        names, indices, data_p_values, window
     )
     sequences = [sequence for sequence in sequences if len(sequence) >= length]
     sequences = processing.substitute_amino_acids(sequences)
@@ -152,38 +156,116 @@ def most_significant_p_values_test():
 
 def all_most_significant_p_values_test():
     path = "test_data/simulated-phosphoproteomic-data.txt"
-    window = 1; length = 2 * window + 1
-    offset = 2
+    window = 2; length = 2 * window + 1
     step = 1024
     
-    names, sites, data_p_values = [], [], []
+    names, indices, data_p_values = [], [], []
     with open(path) as f:
         for line in f.readlines()[1:]:
             row = line.split("\t")
             if row[3] == "P":
                 names.append(row[0].split("-")[0])
-                sites.append(int(row[2].split("|")[0][1:]))
+                indices.append(int(row[2].split("|")[0][1:]))
                 data_p_values.append(float(row[5]))
 
-    sequences = windowed_ranked_sequences.windowed_ranked_sequences(
-        names, sites, data_p_values, window
+    sequences = sequence_search.ranked_windowed_sequences(
+        names, indices, data_p_values, window
     )
-    sequences = processing.substitute_amino_acids(sequences)
     sequences = [sequence for sequence in sequences if len(sequence) >= length]
+    sequences = processing.substitute_amino_acids(sequences)
     columns = [[sequence[i] for sequence in sequences] for i in range(length)]
     letter_counts = analysis.letter_counts(columns)
-    result = p_values.all_most_significant_p_values(sequences, letter_counts, step)
+    results = p_values.all_most_significant_p_values(
+        sequences, letter_counts, step
+    )
+    
+    for c, column in enumerate(results):
+        print(c - window if c < window else "+" + str(c - window + 1))
+        for p, pair in enumerate(column):
+            if pair != (0,0): 
+                print(chr(p), "|", f'{pair[0]:.6f}', "|", f'{pair[1]:.6f}')
+        print()
+    
+    
+def null_distribution_test():
+    path = "test_data/simulated-phosphoproteomic-data.txt"
+    window = 1; length = 2 * window + 1
+    step = 1024
+    N = 10
+    seed = 0
+    
+    names, indices, = [], []
+    with open(path) as f:
+        for line in f.readlines()[1:]:
+            row = line.split("\t")
+            if row[3] == "P":
+                names.append(row[0].split("-")[0])
+                indices.append(int(row[2].split("|")[0][1:]))
+                
+    sequences = sequence_search.get_sequences(names)
+    sequences = [sequence_search.windowed_sequence(sequence, index, window)
+                for (sequence, index) in zip(sequences, indices)]
+    sequences = [sequence for sequence in sequences if len(sequence) >= length]
+    sequences = processing.substitute_amino_acids(sequences)
+    columns = [[sequence[i] for sequence in sequences] for i in range(length)]
+    letter_counts = analysis.letter_counts(columns)
+    
+    random.seed(seed)
+    all_results = []
+    for _ in range(N):
+        random.shuffle(sequences)
+        all_results.append(p_values.all_most_significant_p_values(
+            sequences, letter_counts, step)
+        )
+
+    if N > 10: return
+    for r, results in enumerate(all_results):
+        print(r)
+        for c, column in enumerate(results):
+            print(c - window if c < window else "+" + str(c - window + 1))
+            for p, pair in enumerate(column):
+                if pair != (0,0): 
+                    print(chr(p), "|", f'{pair[0]:.6f}', "|", f'{pair[1]:.6f}')
+            print()
+        print()
+        
+
+def iterative_motif_search_test():
+    path = "test_data/simulated-phosphoproteomic-data.txt"
+    window = 1; length = 2 * window + 1
+    step = 1024
+    threshold = 0.005
+    
+    names, indices, = [], []
+    with open(path) as f:
+        for line in f.readlines()[1:]:
+            row = line.split("\t")
+            if row[3] == "P":
+                names.append(row[0].split("-")[0])
+                indices.append(int(row[2].split("|")[0][1:]))
+                
+    sequences = sequence_search.get_sequences(names)
+    sequences = [sequence_search.windowed_sequence(sequence, index, window)
+                for (sequence, index) in zip(sequences, indices)]
+    sequences = [sequence for sequence in sequences if len(sequence) >= length]
+    sequences = processing.substitute_amino_acids(sequences)
+    
+    print(motif_search.motif_search(sequences, step, threshold))
+    
+                        
 
 
 def main():
     #print("\n\nP-Value"); hypergeometric_test()
     #print("\n\nWindowed Sequence"); windowed_sequence_test()
-    #print("\n\nWindowed Ranked Sequence\n"); windowed_ranked_sequence_test()
+    #print("\n\nWindowed Ranked Sequence\n"); ranked_windowed_sequences_test()
     #print("\nSubstitution test\n"); amino_acid_substitution_test()
     #print("\nLetter Counts Test\n"); letter_counts_test()
     #print("\nFiltered Sequences Test\n"); filtered_sequences_test()
     #print("\nMost Significant P Values Test\n") most_significant_p_values_test()
-    print("\nAll Most Significant P Values Test\n"); all_most_significant_p_values_test()
+    #print("\nAll Most Significant P Values Test\n"); all_most_significant_p_values_test()
+    #print("\nNull Distribution Test\n"); null_distribution_test()
+    iterative_motif_search_test()
 if __name__ == "__main__": main()
         
                            

@@ -1,12 +1,13 @@
 def substitute_amino_acids(sequences):
     """
-    Return the sequences with their amino acids replaced as specified in
-    amino-acid-mapping.tsv
+    Return the sequences with their amino acids replaced as specified 
+    in amino-acid-mapping.tsv
     """
     with open("amino-acid-mapping.tsv") as f:
         substitutions = {line.split("\t")[0] : line.split("\t")[1][:-1]
                          for line in f.readlines()}
-    return ["".join([substitutions[amino_acid] for amino_acid in sequence])
+            
+    return ["".join(substitutions[amino_acid] for amino_acid in sequence)
              for sequence in sequences]
 
 
@@ -16,10 +17,19 @@ def filter_sequences(requirements, sequences):
 
     Requirements must be an list or tuple of the form:
     (
-        (column, letter, presence_or_absence, letter, presence_or_absence ...),
-        (column, letter, presence_or_absence, letter, presence_or_absence ...),
+        (index, letter, presence_or_absence, letter, presence_or_absence ...),
+        (index, letter, presence_or_absence, letter, presence_or_absence ...),
         ...
     )
+    
+    :param requirements: letters required to be present or absent at 
+                         each index of a sequence
+    :type requirements: tuple(tuple(int, int, boolean, int, boolean, ...))
+    :param sequences: amino acid sequences the letters of which are to be
+                      filtered
+    :type sequences: list[str]
+    :return: the sequences that pass the filters
+    :rtype: list[str]
     """
     filtered_sequences = []
     middle = len(sequences[0]) // 2
