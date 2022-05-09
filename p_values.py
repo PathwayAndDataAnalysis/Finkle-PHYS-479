@@ -6,10 +6,17 @@ from scipy.stats import fisher_exact
 def least_p_value(sequences, index, letter, total_favorable, step, alternative):
     """
     Return the least p-value calculated by Fisher's Exact Test on a 
-    list of windowed sequences, ranked by phenotypic p-value from
-    most significant to most insignificant enrichment most significant
-    to most insignificant deficiency, by sliding a threshold down it.
-    
+    list of windowed sequences by sliding a threshold down it.
+
+    The sequences are ranked by phenotypic p-value from most significant
+    to most insignificant enrichment most significant to most
+    insignificant deficiency.  The appearances of the letter at the index
+    in the sequences are counted down to the threshold, whereupon
+    Fisher's Exact test is applied to calculate the p-value of the count,
+    with this p-value is compared to the least one found so far and saved
+    if lesser.  Then, the threshold is advanced, and counting resumes,
+    with this process repeating down the list.
+        
     :param sequences: sequences of which the p value of a letter at an
                       index is desired
     :type sequences: list[str]
@@ -80,9 +87,9 @@ def all_most_significant_p_values(sequences, letter_counts, step):
     indices = len(sequences[0]); middle = indices // 2
     all_most_significant_p_values_list = [[] for _ in range(indices)]
     for index in range(indices):
-        if index == middle: continue
+        if index == middle: continue # the middle is not to be counted
         for i, count in enumerate(letter_counts[index]):
-            if count == 0:
+            if count == 0: # ignore letters that don't appear at all
                 all_most_significant_p_values_list[index].append((0,0))
                 continue
             values = most_significant_p_values(
