@@ -255,7 +255,7 @@ def iterative_motif_search_test():
     print("(index, letter, presence)")
     print("Index is relative to 0 at the left, letter is the amino acid,")
     print("and presence is whether the acid must appear (True) or absent (False)")
-    print(motif_search.motif_search(sequences, step, threshold))
+    print("\nFinal Graph:", motif_search.motif_search(sequences, step, threshold))
     
                         
 
