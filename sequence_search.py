@@ -63,13 +63,15 @@ def ranked_windowed_sequences(names, indices, p_values, window):
     :rtype: list[str]
     
     """
+    sequences = tuple(windowed_sequences(sequence, site, window)
+                      for sequence, site in zip(get_sequences(names), indices))
     original_order = {p_value : i for i, p_value in enumerate(p_values)}
     p_values.sort()
-    negative_p_values, positive_p_values = [], []
+    deficient_sequences, enriched_sequences = [], []
     for p_value in p_values:
-        if p_value < 0: negative_p_values.append(p_value)
+        if p_value < 0:
+            deficient_sequences.append(sequences[original_order[p_value]])
         else: positive_p_values.append(p_value)
-    sorted_p_values = positive_p_values + negative_p_values
-    sequences = get_sequences(names)
-    return [windowed_sequence(sequence, site, window)
-            for sequence, site in zip(sequences, indices)]
+            enriched_sequences.append(sequences[original_order[p_value]])
+    return enriched_sequences + deficient_sequences
+    
