@@ -80,7 +80,7 @@ def absences_or_presences(index, column, threshold):
                       to declare the corresponding absence or presence
                       of that amino acid in that column to be a motif
     :type threshold: float
-    :return: any newfound motifs in a column on amino acids
+    :return: any newfound motifs in an amino acid column
     :rtype: tuple(tuple(int, str, bool))
     """
     absences, presences = [], []
@@ -93,7 +93,7 @@ def absences_or_presences(index, column, threshold):
     return tuple(absences + presences)
 
 
-def newfound_motifs(sequences, enrichments_and_deficiencies, threshold):
+def new_motifs(sequences, enrichments_and_deficiencies, threshold):
     """
     Return any new motifs in the sequences.
 
@@ -104,13 +104,13 @@ def newfound_motifs(sequences, enrichments_and_deficiencies, threshold):
                                          p-value of every amino acid
                                          at every index of the sequences
     :type enrichments_and_deficiencies: tuple(tuple(float, float))
-    :return:
-    :rtype:
+    :return: any newfound motifs in the amino acid sequences
+    :rtype: tuple(tuple(tuple(int, str, bool)))
     """
-    newfound_motifs = []
+    new_motifs = []
     for index, column in enumerate(enrichments_and_deficiencies):
-        newfound_motifs += absences_or_presences(index, column, threshold)
-    return newfound_motifs
+        new_motifs += absences_or_presences(index, column, threshold)
+    return tuple(new_motifs)
 
 
 def motif_search(sequences, step, threshold, motif = None):
@@ -148,12 +148,12 @@ def motif_search(sequences, step, threshold, motif = None):
         sequences, step
     )
     
-    motifs = newfound_motifs(sequences, enrichments_and_deficiencies, threshold)    
+    motifs = new_motifs(sequences, enrichments_and_deficiencies, threshold)    
     print()
     print(len(sequences))
     print(motif, "=>", motifs)
     # If no new motif has been found, return the given motif,
     # Else, return the next branch in the graph for each new motif
-    return {motif : motif_search(sequences, step, threshold, newfound_motif)
-            for newfound_motif in motifs} if motifs else motif
+    return {motif : motif_search(sequences, step, threshold, new_motif)
+            for new_motif in motifs} if motifs else motif
         
