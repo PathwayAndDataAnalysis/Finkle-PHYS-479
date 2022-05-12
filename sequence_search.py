@@ -1,5 +1,7 @@
 import random
 
+
+
 def get_sequences(gene_names):
     """
     Return the sequences of the named genes in the database.
@@ -38,10 +40,10 @@ def windowed_sequence(sequence, index, window):
     :return: windowed view of the letters in the sequence
     :rtype str
     """
-    return sequence[index - window - 1 : index + window]
+    return sequence[index - window - 2: index + window - 1]
 
 
-def ranked_windowed_sequences(names, indices, p_values, window):
+def ranked_windowed_sequences(names, indices, data_p_values, window):
     """
     Return a list of windowed sequences ranked by p-value.
     
@@ -63,12 +65,12 @@ def ranked_windowed_sequences(names, indices, p_values, window):
     :rtype: list[str]
     
     """
-    sequences = tuple(windowed_sequences(sequence, site, window)
-                      for sequence, site in zip(get_sequences(names), indices))
-    original_order = {p_value : i for i, p_value in enumerate(p_values)}
-    p_values.sort()
+    sequences = tuple(windowed_sequence(sequence, index, window)
+                      for sequence, index in zip(get_sequences(names), indices))
+    original_order = {p_value : i for i, p_value in enumerate(data_p_values)}
+    data_p_values.sort()
     deficient_sequences, enriched_sequences = [], []
-    for p_value in p_values:
+    for p_value in data_p_values:
         if p_value < 0:
             deficient_sequences.append(sequences[original_order[p_value]])
         else:

@@ -47,12 +47,12 @@ def test_windowed_sequence():
     gene_names = ["ADAM2", "MCU", "RYR3", "TG", "KCP", "RTN4"]
     site_indexes = [10, 20, 30, 40, 50, 107]
     window_sizes = [3, 4, 5, 6, 5, 5]
-    accepted_windowed_sequences = ["LLSGLGG",
-                                   "RGGGGGGAG",
-                                   "CIATIHKEQRK",
-                                   "CELQRETAFLKQA",
-                                   "LAGNSQEQWHP",
-                                   "PERQPSWDPSP"]
+    accepted_windowed_sequences = ["FLLSGLG",
+                                   "SRGGGGGGA",
+                                   "QCIATIHKEQR",
+                                   "PCELQRETAFLKQ",
+                                   "VLAGNSQEQWH",
+                                   "APERQPSWDPS"]
 
     whole_sequences = sequence_search.get_sequences(gene_names)
     for name, index, size, whole_sequence, accepted_windowed_sequence in zip(
@@ -63,11 +63,12 @@ def test_windowed_sequence():
 
 
 def test_ranked_windowed_sequences():
-    return # this test needs rewriting
+    #return # this test needs rewriting
     data_path = "test_data/ranked_sequences_test_data.txt"
     expected = ["EPSEVPTPKRP","LSLVAASPTLS","RRADNCSPVAE","PPYPQSRKLSY"]
+    window = 5
 
-    names, indices = [], []
+    names, indices, data_p_values = [], [], []
     with open(data_path) as f:
         for line in f.readlines()[1:]:
             row = line.split("\t")
@@ -75,10 +76,9 @@ def test_ranked_windowed_sequences():
                 names.append(row[0].split("-")[0])
                 indices.append(int(row[2].split("|")[0][1:]))
                 data_p_values.append(float(row[5]))
-    sequences = sequence_search.get_sequences(names)
-    sequences = [sequence_search.windowed_sequence(sequence, index, window)
-                 for sequence, index in zip(sequences, indices)]
-    found = sequence_search.ranked_windowed_sequences(, 5)
+    found = sequence_search.ranked_windowed_sequences(
+        names, indices, data_p_values, window
+    )
     for expected_sequence, found_sequence in zip(expected, found):
         assert found_sequence == expected_sequence
 
