@@ -142,15 +142,20 @@ def motif_search(sequences, step, threshold, motif = None):
     :return: a directed acyclic graph of any motifs in the sequences
     """
 
-    if motif: sequences = filtered_sequences(sequences, motif)
+    
+    if motif:
+        old_length = len(sequences)
+        sequences = filtered_sequences(sequences, motif)
+        if len(sequences) == old_length: return motif
+    
 
     enrichments_and_deficiencies = enrichment_and_deficiency_p_values(
         sequences, step
     )
     
     motifs = new_motifs(sequences, enrichments_and_deficiencies, threshold)    
-    print()
-    print(len(sequences))
+    
+    
     print(motif, "=>", motifs)
     # If no new motif has been found, return the given motif,
     # Else, return the next branch in the graph for each new motif

@@ -54,7 +54,7 @@ def test_windowed_sequence():
                                    "VLAGNSQEQWH",
                                    "APERQPSWDPS"]
 
-    whole_sequences = sequence_search.get_sequences(gene_names)
+    whole_sequences, failures = sequence_search.get_sequences(gene_names)
     for name, index, size, whole_sequence, accepted_windowed_sequence in zip(
         gene_names, site_indexes, window_sizes, whole_sequences,
         accepted_windowed_sequences):
@@ -76,8 +76,14 @@ def test_ranked_windowed_sequences():
                 names.append(row[0].split("-")[0])
                 indices.append(int(row[2].split("|")[0][1:]))
                 data_p_values.append(float(row[5]))
+    sequences, failures = sequence_search.get_sequences(names)
+    for f, failure in enumerate(failures):
+        del indices[f]
+        del data_p_values[f]
+    sequences = tuple(sequence_search.windowed_sequence(sequence, index, window)
+                      for sequence, index in zip(sequences, indices))
     found = sequence_search.ranked_windowed_sequences(
-        names, indices, data_p_values, window
+        sequences, indices, data_p_values, window
     )
     for expected_sequence, found_sequence in zip(expected, found):
         assert found_sequence == expected_sequence
@@ -120,10 +126,8 @@ def test_filtered_sequences():
 
 
 def test_most_significant_p_values():
-    return # this test needs rewriting
-    # needs expected values
-    data_path = "test_data/sample-phosphoproteomic-data.txt"
-    letter, window, index = "A", 4, 2
+    data_path = "test_data/simulated-phosphoproteomic-data.txt"
+    letter, window, index = "H", 4, 2
     length = 2 * window
     step = 1024
     
@@ -135,23 +139,28 @@ def test_most_significant_p_values():
                 names.append(row[0].split("-")[0])
                 indices.append(int(row[2].split("|")[0][1:]))
                 data_p_values.append(float(row[5]))
-                
+
+    sequences, failures = sequence_search.get_sequences(names)
+    for f, failure in enumerate(failures):
+        del indices[f]
+        del data_p_values[f]
+    sequences = tuple(sequence_search.windowed_sequence(sequence, index, window)
+                      for sequence, index in zip(sequences, indices))
     sequences = sequence_search.ranked_windowed_sequences(
-        names, indices, data_p_values, window
+        sequences, indices, data_p_values, window
     )
     sequences = [sequence for sequence in sequences if len(sequence) >= length]
     sequences = processing.substitute_amino_acids(sequences)
     column = [sequence[index] for sequence in sequences]
     favorable = analysis.column_letter_counts(column)[ord(letter)]
-    print(
-        "Most significant p-values:",
+    assert (
         p_values.most_significant_p_values(
             sequences, index, letter, favorable, step
-        )
+        ) == (0.14422902528469464, 0.15782425762185406)
     )
 
 
-def all_most_significant_p_values_test():
+def test_all_most_significant_p_values():
     # needs expected values
     path = "test_data/simulated-phosphoproteomic-data.txt"
     window = 2; length = 2 * window + 1
@@ -166,8 +175,14 @@ def all_most_significant_p_values_test():
                 indices.append(int(row[2].split("|")[0][1:]))
                 data_p_values.append(float(row[5]))
 
+    sequences, failures = sequence_search.get_sequences(names)
+    for f, failure in enumerate(failures):
+        del indices[f]
+        del data_p_values[f]
+    sequences = tuple(sequence_search.windowed_sequence(sequence, index, window)
+                      for sequence, index in zip(sequences, indices))
     sequences = sequence_search.ranked_windowed_sequences(
-        names, indices, data_p_values, window
+        sequences, indices, data_p_values, window
     )
     sequences = [sequence for sequence in sequences if len(sequence) >= length]
     sequences = processing.substitute_amino_acids(sequences)
@@ -185,7 +200,7 @@ def all_most_significant_p_values_test():
         print()
     
     
-def null_distribution_test():
+def test_null_distribution():
     # needs expected values
     path = "test_data/simulated-phosphoproteomic-data.txt"
     window = 1; length = 2 * window + 1
@@ -203,7 +218,8 @@ def null_distribution_test():
                 names.append(row[0].split("-")[0])
                 indices.append(int(row[2].split("|")[0][1:]))
                 
-    sequences = sequence_search.get_sequences(names)
+    sequences, failures = sequence_search.get_sequences(names)
+    for f, failure in enumerate(failures): del indices[f]
     sequences = [sequence_search.windowed_sequence(sequence, index, window)
                 for (sequence, index) in zip(sequences, indices)]
     sequences = [sequence for sequence in sequences if len(sequence) >= length]
@@ -213,12 +229,12 @@ def null_distribution_test():
     )
         
 
-def iterative_motif_search_test():
+def test_iterative_motif_search():
     # needs expected values
     path = "test_data/simulated-phosphoproteomic-data.txt"
     window = 5; length = 2 * window + 1
     step = 1024
-    threshold = 0.0005
+    threshold = 0.0000005
     
     names, indices, = [], []
     with open(path) as f:
@@ -228,32 +244,11 @@ def iterative_motif_search_test():
                 names.append(row[0].split("-")[0])
                 indices.append(int(row[2].split("|")[0][1:]))
                 
-    sequences = sequence_search.get_sequences(names)
+    sequences, failures = sequence_search.get_sequences(names)
+    for f, failure in enumerate(failures): del indices[f]
     sequences = [sequence_search.windowed_sequence(sequence, index, window)
                 for (sequence, index) in zip(sequences, indices)]
     sequences = [sequence for sequence in sequences if len(sequence) >= length]
     sequences = processing.substitute_amino_acids(sequences)
-    
-    print("Key:")
-    print("motif => [newfound_motifs]")
-    print("(index, letter, presence)")
-    print("Index is relative to 0 at the left, letter is the amino acid,")
-    print("and presence is whether the acid must appear (True) or absent (False)")
-    print("Final Graph", motif_search.motif_search(sequences, step, threshold))
-    
-                        
-
-
-def main():
-    #print("\n\nWindowed Sequence"); windowed_sequence_test()
-    #print("\n\Ranked Windowed Sequences Test\n"); ranked_windowed_sequences_test()
-    #print("\nSubstitution Test\n"); amino_acid_substitution_test()
-    #print("\nLetter Counts Test\n"); letter_counts_test()
-    #print("\nFiltered Sequences Test\n"); filtered_sequences_test()
-    #print("\nMost Significant P Values Test\n"); most_significant_p_values_test()
-    #print("\nAll Most Significant P Values Test\n"); all_most_significant_p_values_test()
-    #print("\nNull Distribution Test\n"); null_distribution_test()
-    print("\nIterative Motif Search:"); iterative_motif_search_test()
-if __name__ == "__main__": main()
-        
-                           
+    assert(motif_search.motif_search(sequences, step, threshold)
+           == {None: {(6, 'P', False): (6, 'P', False)}})

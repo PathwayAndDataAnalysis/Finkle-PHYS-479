@@ -5,9 +5,18 @@ def substitute_amino_acids(sequences):
     """
     with open("amino-acid-mapping.tsv") as f:
         substitutions = {line.split("\t")[0] : line.split("\t")[1][:-1]
-                         for line in f.readlines()}
-    return ["".join(substitutions[amino_acid] for amino_acid in sequence)
-             for sequence in sequences]
+                         for line in f.readlines()[1:]}
+
+    new_sequences = []
+    for sequence in sequences:
+        try:
+            new_sequences.append("".join(
+                substitutions[amino_acid] for amino_acid in sequence
+            ))
+        except:
+            pass
+            
+    return new_sequences
 
 
 def filter_sequences(requirements, sequences):
