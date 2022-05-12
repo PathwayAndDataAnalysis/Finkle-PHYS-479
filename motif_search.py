@@ -39,7 +39,7 @@ def filtered_sequences(sequences, motif):
     return [sequence for sequence in sequences if matches(sequence, *motif)]
 
 
-def enrichment_and_deficiency_p_values(sequences):
+def enrichment_and_deficiency_p_values(sequences, step):
     """
     Return the enrichment and deficiency p-values of the letter counts
     of the sequences.
@@ -61,7 +61,7 @@ def enrichment_and_deficiency_p_values(sequences):
     )
 
 
-def newfound_motifs(sequences, enrichments_and_deficiencies):
+def newfound_motifs(sequences, enrichments_and_deficiencies, threshold):
     """
     Return any new motifs in the sequences.
 
@@ -115,9 +115,11 @@ def motif_search(sequences, step, threshold, motif = None):
 
     if motif: sequences = filtered_sequences(sequences, motif)
 
-    values = enrichement_and_deficiency_p_values(sequences)
+    enrichments_and_deficiencies = enrichment_and_deficiency_p_values(
+        sequences, step
+    )
     
-    motifs = newfound_motifs(sequences)    
+    motifs = newfound_motifs(sequences, enrichments_and_deficiencies, threshold)    
     print()
     print(len(sequences))
     print(motif, "=>", motifs)

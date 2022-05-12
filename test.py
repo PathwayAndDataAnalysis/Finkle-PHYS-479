@@ -73,8 +73,7 @@ def windowed_sequence_test():
 
 def ranked_windowed_sequences_test():
     expected = ["EPSEVPTPKRP","LSLVAASPTLS","RRADNCSPVAE","PPYPQSRKLSY"]
-    found = sequence_search.ranked_windowed_sequences(
-        "test_data/ranked_sequences_test_data.txt", 5)
+    found = sequence_search.ranked_windowed_sequences("test_data/ranked_sequences_test_data.txt", 5)
     for expected_sequence, found_sequence in zip(expected, found):
         print("Expected:", expected_sequence)
         print("Found:   ", found_sequence)
@@ -128,9 +127,10 @@ def most_significant_p_values_test():
     data_path = "test_data/sample-phosphoproteomic-data.txt"
     letter, window, index = "L", 4, 2
     length = 2 * window
+    step = 1
     
     names, indices, data_p_values = [], [], []
-    with open(path) as f:
+    with open(data_path) as f:
         for line in f.readlines()[1:]:
             row = line.split("\t")
             if row[3] == "P":
@@ -148,8 +148,8 @@ def most_significant_p_values_test():
     import time
     start = time.time()
     print(
-        "Most significiant p-values:",
-        p_values.most_significant_p_values(sequences, index, letter, favorable)
+        "Most significant p-values:",
+        p_values.most_significant_p_values(sequences, index, letter, favorable, step)
     )
     print(round(time.time() - start, 2))
 
@@ -255,22 +255,22 @@ def iterative_motif_search_test():
     print("(index, letter, presence)")
     print("Index is relative to 0 at the left, letter is the amino acid,")
     print("and presence is whether the acid must appear (True) or absent (False)")
-    print("\nFinal Graph:", motif_search.motif_search(sequences, step, threshold))
+    print("Final Graph", motif_search.motif_search(sequences, step, threshold))
     
                         
 
 
 def main():
-    print("\n\nP-Value"); hypergeometric_test()
-    print("\n\nWindowed Sequence"); windowed_sequence_test()
-    print("\n\nWindowed Ranked Sequence\n"); ranked_windowed_sequences_test()
-    print("\nSubstitution test\n"); amino_acid_substitution_test()
-    print("\nLetter Counts Test\n"); letter_counts_test()
-    print("\nFiltered Sequences Test\n"); filtered_sequences_test()
-    print("\nMost Significant P Values Test\n") most_significant_p_values_test()
-    print("\nAll Most Significant P Values Test\n"); all_most_significant_p_values_test()
-    print("\nNull Distribution Test\n"); null_distribution_test()
-    print("\nIterative Motif Search:", iterative_motif_search_test())
+    #print("\n\nP-Value"); hypergeometric_test()
+    #print("\n\nWindowed Sequence"); windowed_sequence_test()
+    #print("\n\Ranked Windowed Sequences Test\n"); ranked_windowed_sequences_test()
+    #print("\nSubstitution Test\n"); amino_acid_substitution_test()
+    #print("\nLetter Counts Test\n"); letter_counts_test()
+    #print("\nFiltered Sequences Test\n"); filtered_sequences_test()
+    #print("\nMost Significant P Values Test\n"); most_significant_p_values_test()
+    #print("\nAll Most Significant P Values Test\n"); all_most_significant_p_values_test()
+    #print("\nNull Distribution Test\n"); null_distribution_test()
+    #print("\nIterative Motif Search:"); iterative_motif_search_test()
 if __name__ == "__main__": main()
         
                            
