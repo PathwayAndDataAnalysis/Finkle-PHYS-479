@@ -71,7 +71,7 @@ def ranked_windowed_sequences(names, indices, p_values, window):
     for p_value in p_values:
         if p_value < 0:
             deficient_sequences.append(sequences[original_order[p_value]])
-        else: positive_p_values.append(p_value)
+        else:
             enriched_sequences.append(sequences[original_order[p_value]])
     return enriched_sequences + deficient_sequences
     
