@@ -8,7 +8,7 @@ import null_distribution
 import scipy
 
 
-def hypergeometric_test():
+def test_fisher_exact():
     """
     Assume the letters a, b, c, and d represent the counts 
     as displayed below.
@@ -18,76 +18,79 @@ def hypergeometric_test():
     + c d
 
     Then if a = 4, b = 6, c = 6, d = 4,
-    The enrichment p-value should be 0.9105522960012121
-    The deficiency p-value should be 0.3281408993483296
+    the deficiency p-value should be 0.3281408993483299
+    the enrichment p-value should be 0.9105522960012129
 
     If a = 15, b = 8, c = 20, d = 42
-    The enrichment p-value should be 0.006445865568610187
-    The deficiency p-value should be 0.9985899806396821
+    the deficiency p-value should be 0.9985899806396819
+    the enrichment p-value should be 0.006445865568610196
 
     If a = 21, b = 20, c = 34, d = 13
-    The enrichment p-value should be 0.9883420938210076
-    The deficiency p-value should be 0.0341612031176084
+    the deficiency p-value should be 0.03416120311760853
+    the enrichment p-value should be 0.9883420938210062
     """
     tables = [[[4, 6], [6, 4]],
               [[15, 8], [20, 42]],
               [[21, 20], [34, 13]]]
-    accepted_p_values_list = [[0.9105522960012121, 0.3281408993483296],
-                              [0.006445865568610187, 0.9985899806396821],
-                              [0.9883420938210076, 0.0341612031176084]]
-    failures = 0
+                                 
+    accepted_p_values_list = [[0.3281408993483299, 0.9105522960012129],
+                              [0.9985899806396819, 0.006445865568610196],
+                              [0.03416120311760853, 0.9883420938210062]]
     for table, accepted_p_values in zip(tables, accepted_p_values_list):
         deficiency_p_value = scipy.stats.fisher_exact(table, 'less')[1]
         enrichment_p_value = scipy.stats.fisher_exact(table, 'greater')[1]
-        print()
-        print(table[0])
-        print(table[1])
-        print("           Enrichment      |     Deficiency")
-        print("Accepted", *accepted_p_values)
-        print("Found   ", enrichment_p_value, deficiency_p_value)
+        assert (accepted_p_values[0] == deficiency_p_value
+                and accepted_p_values[1] == enrichment_p_value)
 
 
-def windowed_sequence_test():
+def test_windowed_sequence():
     gene_names = ["ADAM2", "MCU", "RYR3", "TG", "KCP", "RTN4"]
     site_indexes = [10, 20, 30, 40, 50, 107]
     window_sizes = [3, 4, 5, 6, 5, 5]
-    accepted_windowed_sequences = ["L L S G L G G",
-                                   "R G G G G G G A G",
-                                   "C I A T I H K E Q R K",
-                                   "C E L Q R E T A F L K Q A",
-                                   "L A G N S Q E Q W H P",
-                                   "P E R Q P S W D P S P"]
+    accepted_windowed_sequences = ["LLSGLGG",
+                                   "RGGGGGGAG",
+                                   "CIATIHKEQRK",
+                                   "CELQRETAFLKQA",
+                                   "LAGNSQEQWHP",
+                                   "PERQPSWDPSP"]
 
     whole_sequences = sequence_search.get_sequences(gene_names)
     for name, index, size, whole_sequence, accepted_windowed_sequence in zip(
         gene_names, site_indexes, window_sizes, whole_sequences,
         accepted_windowed_sequences):
-
-        print()
-        print("Gene:    ", name)
-        print("Accepted:", accepted_windowed_sequence)
-        print("Found:   ", *sequence_search.windowed_sequence(
-            whole_sequence, index, size))
+        assert (sequence_search.windowed_sequence(whole_sequence, index, size)
+                == accepted_windowed_sequence)
 
 
-def ranked_windowed_sequences_test():
+def test_ranked_windowed_sequences():
+    return # this test needs rewriting
+    data_path = "test_data/ranked_sequences_test_data.txt"
     expected = ["EPSEVPTPKRP","LSLVAASPTLS","RRADNCSPVAE","PPYPQSRKLSY"]
-    found = sequence_search.ranked_windowed_sequences("test_data/ranked_sequences_test_data.txt", 5)
+
+    names, indices = [], []
+    with open(data_path) as f:
+        for line in f.readlines()[1:]:
+            row = line.split("\t")
+            if row[3] == "P":
+                names.append(row[0].split("-")[0])
+                indices.append(int(row[2].split("|")[0][1:]))
+                data_p_values.append(float(row[5]))
+    sequences = sequence_search.get_sequences(names)
+    sequences = [sequence_search.windowed_sequence(sequence, index, window)
+                 for sequence, index in zip(sequences, indices)]
+    found = sequence_search.ranked_windowed_sequences(, 5)
     for expected_sequence, found_sequence in zip(expected, found):
-        print("Expected:", expected_sequence)
-        print("Found:   ", found_sequence)
-        print()
+        assert found_sequence == expected_sequence
 
 
-def amino_acid_substitution_test():
+def test_amino_acid_substitution():
     sequence = "ARNDCEQGHILKMFPSTWYV"
-    print("Sequence:             ", sequence)
-    print("Expected substitution: AKQDCDQAHIIKIFPSSWFI")
-    print("Found substitution:   ",
-          "".join(processing.substitute_amino_acids(sequence)))
+    expected_substitution = "AKQDCDQAHIIKIFPSSWFI"
+    found_substitution = "".join(processing.substitute_amino_acids(sequence))
+    assert expected_substitution == found_substitution
 
 
-def letter_counts_test():
+def test_letter_counts():
     columns = ["HHK", "DDY", "JYH", "SSD", "YTH"]
     expected_count_list = [["H", 2, "K", 1],
                            ["D", 2, "Y", 1],
@@ -103,26 +106,22 @@ def letter_counts_test():
     for i, row in enumerate(found_counts):
         for j, count in enumerate(row):
             if expected_counts[i][j] > 0 or count > 0:
-                print("Expected:", chr(j), expected_counts[i][j])
-                print("Found:", chr(j), count)
-                print()
-            if count != expected_counts[i][j]:
-                print("TEST FAILED!")
-                print()
+                assert expected_counts[i][j] == count
 
 
-def filtered_sequences_test():
+def test_filtered_sequences():
     sequences = ["DHFJD", "DHFGT", "FGHTU", "KJFHY", "DHFHH", "DJFSP"]
     requirements = ((-2, [], ["D"]),
                     (1, ["J", "S"], []))
     expected_filtered_sequences = ["DHFGT", "DHFHH"]
     found_filtered_sequences = processing.filter_sequences(requirements,
                                                            sequences)
-    print("Expected:", expected_filtered_sequences)
-    print("Found:   ", found_filtered_sequences)
+    assert found_filtered_sequences == expected_filtered_sequences
 
 
-def most_significant_p_values_test():
+def test_most_significant_p_values():
+    return # this test needs rewriting
+    # needs expected values
     data_path = "test_data/sample-phosphoproteomic-data.txt"
     letter, window, index = "A", 4, 2
     length = 2 * window
@@ -153,6 +152,7 @@ def most_significant_p_values_test():
 
 
 def all_most_significant_p_values_test():
+    # needs expected values
     path = "test_data/simulated-phosphoproteomic-data.txt"
     window = 2; length = 2 * window + 1
     step = 1024
@@ -186,6 +186,7 @@ def all_most_significant_p_values_test():
     
     
 def null_distribution_test():
+    # needs expected values
     path = "test_data/simulated-phosphoproteomic-data.txt"
     window = 1; length = 2 * window + 1
     step = 1024
@@ -213,6 +214,7 @@ def null_distribution_test():
         
 
 def iterative_motif_search_test():
+    # needs expected values
     path = "test_data/simulated-phosphoproteomic-data.txt"
     window = 5; length = 2 * window + 1
     step = 1024
@@ -243,7 +245,6 @@ def iterative_motif_search_test():
 
 
 def main():
-    #print("\n\nP-Value"); hypergeometric_test()
     #print("\n\nWindowed Sequence"); windowed_sequence_test()
     #print("\n\Ranked Windowed Sequences Test\n"); ranked_windowed_sequences_test()
     #print("\nSubstitution Test\n"); amino_acid_substitution_test()
