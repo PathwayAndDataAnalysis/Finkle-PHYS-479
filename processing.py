@@ -24,7 +24,7 @@ def filter_sequences(requirements, sequences):
     :param requirements: letters required to be present or absent at 
                          each index of a sequence
     :type requirements: tuple(tuple(int, int, boolean, int, boolean, ...))
-    :param sequences: amino acid sequences the letters of which are to be
+    :param sequences: amino acid sequences, the letters of which are to be
                       filtered
     :type sequences: list[str]
     :return: the sequences that pass the filters

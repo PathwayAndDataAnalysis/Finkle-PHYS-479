@@ -41,7 +41,8 @@ def least_p_value(sequences, index, letter, total_favorable, step, alternative):
         if threshold % step == 0:
             table = [[total_unfavorable - unfavorable, unfavorable],
                      [total_favorable - favorable, favorable]]
-            least_p_value = min(least_p_value, fisher_exact(table, alternative)[1])
+            least_p_value = min(least_p_value,
+                                fisher_exact(table, alternative)[1])
     return least_p_value
 
 
@@ -65,8 +66,10 @@ def most_significant_p_values(sequences, index, letter, total_favorable, step):
     :return: least deficiency and enrichment p-values of the letter
     :rtype: tuple(float, float)
     """
-    return (least_p_value(sequences, index, letter, total_favorable, step, "less"),
-            least_p_value(sequences, index, letter, total_favorable, step, "greater"))
+    return (
+        least_p_value(sequences, index, letter, total_favorable, step, "less"),
+        least_p_value(sequences, index, letter, total_favorable, step, "greater")
+    )
 
 
 def all_most_significant_p_values(sequences, letter_counts, step):
@@ -88,12 +91,12 @@ def all_most_significant_p_values(sequences, letter_counts, step):
     all_most_significant_p_values_list = [[] for _ in range(indices)]
     for index in range(indices):
         if index == middle: continue # the middle is not to be counted
-        for i, count in enumerate(letter_counts[index]):
+        for c, count in enumerate(letter_counts[index]):
             if count == 0: # ignore letters that don't appear at all
-                all_most_significant_p_values_list[index].append((0,0))
+                all_most_significant_p_values_list[index].append((None, None))
                 continue
             values = most_significant_p_values(
-                sequences, index, chr(i), count, step
+                sequences, index, chr(c), count, step
             )
             all_most_significant_p_values_list[index].append(values)
         all_most_significant_p_values_list[index] = tuple(

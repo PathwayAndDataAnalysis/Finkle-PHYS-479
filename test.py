@@ -3,8 +3,7 @@ import sequence_search
 import processing
 import analysis
 import motif_search
-
-import random
+import null_distribution
 
 import scipy
 
@@ -125,9 +124,9 @@ def filtered_sequences_test():
 
 def most_significant_p_values_test():
     data_path = "test_data/sample-phosphoproteomic-data.txt"
-    letter, window, index = "L", 4, 2
+    letter, window, index = "A", 4, 2
     length = 2 * window
-    step = 1
+    step = 1024
     
     names, indices, data_p_values = [], [], []
     with open(data_path) as f:
@@ -145,13 +144,12 @@ def most_significant_p_values_test():
     sequences = processing.substitute_amino_acids(sequences)
     column = [sequence[index] for sequence in sequences]
     favorable = analysis.column_letter_counts(column)[ord(letter)]
-    import time
-    start = time.time()
     print(
         "Most significant p-values:",
-        p_values.most_significant_p_values(sequences, index, letter, favorable, step)
+        p_values.most_significant_p_values(
+            sequences, index, letter, favorable, step
+        )
     )
-    print(round(time.time() - start, 2))
 
 
 def all_most_significant_p_values_test():
@@ -191,8 +189,10 @@ def null_distribution_test():
     path = "test_data/simulated-phosphoproteomic-data.txt"
     window = 1; length = 2 * window + 1
     step = 1024
-    N = 10
+    repetitions = 10
     seed = 0
+
+    if repetitions > 10: return
     
     names, indices, = [], []
     with open(path) as f:
@@ -207,27 +207,9 @@ def null_distribution_test():
                 for (sequence, index) in zip(sequences, indices)]
     sequences = [sequence for sequence in sequences if len(sequence) >= length]
     sequences = processing.substitute_amino_acids(sequences)
-    columns = [[sequence[i] for sequence in sequences] for i in range(length)]
-    letter_counts = analysis.letter_counts(columns)
-    
-    random.seed(seed)
-    all_results = []
-    for _ in range(N):
-        random.shuffle(sequences)
-        all_results.append(p_values.all_most_significant_p_values(
-            sequences, letter_counts, step)
-        )
-
-    if N > 10: return
-    for r, results in enumerate(all_results):
-        print(r)
-        for c, column in enumerate(results):
-            print(c - window if c < window else "+" + str(c - window + 1))
-            for p, pair in enumerate(column):
-                if pair != (0,0): 
-                    print(chr(p), "|", f'{pair[0]:.6f}', "|", f'{pair[1]:.6f}')
-            print()
-        print()
+    results = null_distribution.null_distribution(
+        sequences, window, repetitions, step, seed
+    )
         
 
 def iterative_motif_search_test():
@@ -267,7 +249,7 @@ def main():
     #print("\nSubstitution Test\n"); amino_acid_substitution_test()
     #print("\nLetter Counts Test\n"); letter_counts_test()
     #print("\nFiltered Sequences Test\n"); filtered_sequences_test()
-    #print("\nMost Significant P Values Test\n"); most_significant_p_values_test()
+    print("\nMost Significant P Values Test\n"); most_significant_p_values_test()
     #print("\nAll Most Significant P Values Test\n"); all_most_significant_p_values_test()
     #print("\nNull Distribution Test\n"); null_distribution_test()
     #print("\nIterative Motif Search:"); iterative_motif_search_test()
