@@ -61,6 +61,38 @@ def enrichment_and_deficiency_p_values(sequences, step):
     )
 
 
+def absences_or_presences(index, column, threshold):
+    """
+    Return any new absence or presence motifs in an amino acid column.
+
+    A motif is a statistically significant pattern, and this method
+    returns any motif that is the absence or presence of an amino acid
+    in a column, defining statistical significance to be an associated
+    deficiency or enrichment p value below a given threshold.
+
+    :param column: a column of amino acids corresponding to every amino
+                   acid at an index of selected, aligned, windowed amino
+                   acid sequences, each associated with a gene
+    :type column: list[str]
+    :param threshold: the p-value below which the deficiency or
+                      enrichment of an amino acid in the column is
+                      statistically significant enough for this method
+                      to declare the corresponding absence or presence
+                      of that amino acid in that column to be a motif
+    :type threshold: float
+    :return: any newfound motifs in a column on amino acids
+    :rtype: tuple(tuple(int, str, bool))
+    """
+    absences, presences = [], []
+    for letter, p_value_pair in enumerate(column):
+        if p_value_pair[0] > threshold or p_value_pair[1] > threshold:
+            if p_value_pair[0] < threshold:
+                absences.append(tuple((index, chr(letter), False)))
+            if p_value_pair[1] < threshold:
+                presences.append(tuple((index, chr(letter), True)))
+    return tuple(absences + presences)
+
+
 def newfound_motifs(sequences, enrichments_and_deficiencies, threshold):
     """
     Return any new motifs in the sequences.
@@ -72,15 +104,12 @@ def newfound_motifs(sequences, enrichments_and_deficiencies, threshold):
                                          p-value of every amino acid
                                          at every index of the sequences
     :type enrichments_and_deficiencies: tuple(tuple(float, float))
+    :return:
+    :rtype:
     """
     newfound_motifs = []
     for index, column in enumerate(enrichments_and_deficiencies):
-        for letter, p_value_pair in enumerate(column):
-            if p_value_pair[0] > threshold or p_value_pair[1] > threshold:
-                if p_value_pair[0] < threshold:
-                    newfound_motifs.append(tuple((index, chr(letter), False)))
-                if p_value_pair[1] < threshold:
-                    newfound_motifs.append(tuple((index, chr(letter), True)))
+        newfound_motifs += absences_or_presences(index, column, threshold)
     return newfound_motifs
 
 
