@@ -56,7 +56,7 @@ def most_significant_p_values(sequences, index, letter, total_favorable, step):
     most significant to most insignificant enrichment most significant
     to most insignificant deficiency, by sliding a threshold down the list.
 
-    Return a pair of None if the total_favorable is zero.
+    Return (0, 0) if the total_favorable is zero.
     
     :param sequences: sequences of which the p value of a letter at an
                       index is desired
@@ -75,14 +75,14 @@ def most_significant_p_values(sequences, index, letter, total_favorable, step):
     :return: least deficiency and enrichment p-values of the letter
     :rtype: tuple(float, float)
     """
-    if total_favorable == 0: return None, None
+    if total_favorable == 0: return 0, 0
     return (
         least_p_value(sequences, index, letter, total_favorable, step, "less"),
         least_p_value(sequences, index, letter, total_favorable, step, "greater")
     )
 
 
-def index_p_values(letter_counts, index, step):
+def index_p_values(sequences, letter_counts, index, step):
     """
     Return the deficiency and enrichment p values of all letters at an
     index in tuple of aligned, windowed sequences.
@@ -120,8 +120,8 @@ def all_most_significant_p_values(sequences, letter_counts, step):
     """
     indices = len(sequences[0]); middle = indices // 2
     return tuple(
-        index_p_values(letter_counts, index, step) for index in range(indices)
-        if index != middle
+        index_p_values(sequences, letter_counts, index, step)
+        for index in range(indices) if index != middle
     )
     
         

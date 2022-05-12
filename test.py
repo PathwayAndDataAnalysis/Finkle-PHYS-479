@@ -249,10 +249,10 @@ def main():
     #print("\nSubstitution Test\n"); amino_acid_substitution_test()
     #print("\nLetter Counts Test\n"); letter_counts_test()
     #print("\nFiltered Sequences Test\n"); filtered_sequences_test()
-    print("\nMost Significant P Values Test\n"); most_significant_p_values_test()
+    #print("\nMost Significant P Values Test\n"); most_significant_p_values_test()
     #print("\nAll Most Significant P Values Test\n"); all_most_significant_p_values_test()
     #print("\nNull Distribution Test\n"); null_distribution_test()
-    #print("\nIterative Motif Search:"); iterative_motif_search_test()
+    print("\nIterative Motif Search:"); iterative_motif_search_test()
 if __name__ == "__main__": main()
         
                            

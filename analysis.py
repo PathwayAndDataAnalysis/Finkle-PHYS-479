@@ -24,8 +24,5 @@ def letter_counts(columns):
     :return: list of counts of letters in each column
     :rtype: tuple(tuple(int))
     """
-    width = len(columns)
-    middle = width // 2
-    relevant = tuple(tuple(i for i in range(0, middle)) 
-                     + tuple(i for i in range(middle, width)))
-    return tuple(column_letter_counts(columns[column]) for column in relevant)
+    return tuple(column_letter_counts(column) for column in columns)
+    
